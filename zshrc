@@ -1,6 +1,7 @@
 # Add `~/bin` to `$PATH`
 export PATH=$HOME/bin:$PATH
 export PATH="/usr/local/sbin:$PATH"
+export PATH=$HOME/.emacs.d/bin:$PATH
 
 # Add path to fzf
 export FZF_BASE=/usr/local/bin/fzf
@@ -11,7 +12,7 @@ ZSH_THEME="fishy"
 DISABLE_UPDATE_PROMPT="true"
 ENABLE_CORRECTION="true"
 #COMPLETION_WAITING_DOTS="true"
-plugins=(git taskwarrior fzf)
+plugins=(git fzf)
 source $ZSH/oh-my-zsh.sh
 
 # Vi bindings in zsh
@@ -30,5 +31,6 @@ unset file;
 
 # Add tab completion for SSH hostnames based on ~/.ssh/config, ignoring wildcards
 # [ -e "$HOME/.ssh/config" ] && complete -o "default" -o "nospace" -W "$(grep "^Host" ~/.ssh/config | grep -v "[?*]" | cut -d " " -f2- | tr ' ' '\n')" scp sftp ssh;
+
 
 

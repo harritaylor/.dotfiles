@@ -21,6 +21,7 @@
     ~/bootstrap.sh: bootstrap
     ~/.hushlogin: hushlogin
     ~/.gvimrc: gvimrc
+    ~/.doom.d : doom.d
     
 
 
