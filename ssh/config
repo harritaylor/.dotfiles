@@ -1,0 +1,6 @@
+Host dais-1
+	HostName dais-1.admin.cf.ac.uk
+	User taylorh
+Host dais-2
+	HostName dais-2.admin.cf.ac.uk
+	User taylorh
