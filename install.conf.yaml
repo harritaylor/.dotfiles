@@ -5,6 +5,7 @@
     ~/.bash_profile: bash_profile
     ~/.bashrc: bashrc
     ~/.gitconfig: gitconfig
+    ~/.gitignore: gitignore
     ~/.ssh/config:
         path: ssh/config
         create: true
@@ -12,5 +13,14 @@
     ~/.vimrc: vimrc
     ~/.zprofile: zprofile
     ~/.zshrc: zshrc
+    ~/.exports: exports
+    ~/.aliases: aliases
+    ~/.functions: functions
+    ~/.macos: macos
+    ~/brew.sh: brew.sh
+    ~/bootstrap.sh: bootstrap
+    ~/.hushlogin: hushlogin
+    ~/.gvimrc: gvimrc
+    
 
 
