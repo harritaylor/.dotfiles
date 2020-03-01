@@ -185,7 +185,8 @@
 
 	insteadOf = "gist:"
 [user]
-	email = harritaylor@users.noreply.github.com
+	email = harritaylor@protonmail.com
 	name = Harri Taylor
+	signingkey = C0F3232A
 [gpg]
 	program = gpg2

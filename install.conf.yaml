@@ -13,6 +13,7 @@
     ~/.vimrc: vimrc
     ~/.zprofile: zprofile
     ~/.zshrc: zshrc
+    ~/.zshenv: aliases
     ~/.exports: exports
     ~/.aliases: aliases
     ~/.functions: functions
@@ -23,6 +24,7 @@
     ~/.gvimrc: gvimrc
     ~/.doom.d : doom.d
     ~/org: ~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents
+    ~/journal.txt: ~/Documents/journal.txt
 
     
 

@@ -12,7 +12,7 @@ ZSH_THEME="fishy"
 DISABLE_UPDATE_PROMPT="true"
 ENABLE_CORRECTION="true"
 #COMPLETION_WAITING_DOTS="true"
-plugins=(git fzf)
+plugins=(git fzf pass)
 source $ZSH/oh-my-zsh.sh
 
 # Vi bindings in zsh
@@ -34,3 +34,20 @@ unset file;
 
 
 
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/Users/harrisontaylor/.conda/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/Users/harrisontaylor/.conda/etc/profile.d/conda.sh" ]; then
+        . "/Users/harrisontaylor/.conda/etc/profile.d/conda.sh"
+    else
+        export PATH="/Users/harrisontaylor/.conda/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+export PATH="/usr/local/opt/gnu-getopt/bin:$PATH"

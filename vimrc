@@ -1,3 +1,5 @@
+" Set the shell env properly
+set shell=zsh
 " Make Vim more useful
 set nocompatible
 " Use the OS clipboard by default (on versions compiled with `+clipboard`)
@@ -19,6 +21,7 @@ let mapleader=","
 " Don’t add empty newlines at the end of files
 set binary
 set noeol
+set undofile
 " Centralize backups, swapfiles and undo history
 set backupdir=~/.vim/backups
 set directory=~/.vim/swaps
@@ -146,16 +149,20 @@ let g:nv_create_note_window = 'tabedit'
 
 " Gruvbox theme
 Plug 'morhetz/gruvbox'
+Plug 'rakr/vim-one'
+Plug 'vim-airline/vim-airline'
 
+let g:airline_theme='one'
 " Initialise plugin system
 call plug#end()
+
 " Follow the interface colour
 if system("defaults read -g AppleInterfaceStyle") =~ '^Dark'
 				set background=dark
+"				colorscheme gruvbox
 else
 				set background=light
 endif
 
-" Use gruvbox
-colorscheme gruvbox
+
 

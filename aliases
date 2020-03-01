@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # Easier navigation: .., ..., ...., ....., ~ and -
 alias ..="cd .."
 alias ...="cd ../.."
@@ -7,21 +5,19 @@ alias ....="cd ../../.."
 alias .....="cd ../../../.."
 alias -- -="cd -"
 
-# Shortcuts
-alias repos="cd ~/Documents/repos"
-alias notes="cd ~/Documents/notes"
-
 alias todo="git grep --line-number -e FIXME -e TODO"
-alias today="vim ~/Desktop/today.txt"
-alias scratch="vim ~/Desktop/scratch.txt"
+
+# journal.txt
+alias events="cat ~/journal.txt | grep --line-number -e '  o' -B 5"
+alias tasks="cat ~/journal.txt  | grep --line-number -e ' \.'"
 
 # Notes
 datestring="$(date +%d-%h-%y)"
-alias review="cd ~/Documents/notes && ls *CAPTURE*"
-#alias scratch="vim note:scratch"
 
 colorflag="-G"
 export LSCOLORS='BxBxhxDxfxhxhxhxhxcxcx'
+
+#alias python="python3"
 
 # List all files colorized in long format
 alias la="ls -lF ${colorflag}"
