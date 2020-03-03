@@ -19,15 +19,14 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. These are the defaults.
 ;; (setq doom-theme 'doom-one)
-(use-package! circadian
-  :init
+(use-package circadian
+  :hook (after-init . circadian-setup)
   :config
   (setq calendar-latitude 51.4827)
   (setq calendar-longitude -3.1820)
   (setq circadian-themes '((:sunrise . doom-one-light)
                            (:sunset . doom-gruvbox))))
-(add-hook 'circadian-after-load-theme-hook
-          #'(solaire-global-mode +1))
+(add-hook 'circadian-after-load-theme-hook #'solaire-mode-reset)
 
 ;; If you intend to use org, it is recommended you change this!
 (setq org-directory "~/Projects/org/"
