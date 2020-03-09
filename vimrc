@@ -117,35 +117,17 @@ if has("autocmd")
 	autocmd BufNewFile,BufRead *.md setlocal filetype=markdown
 endif
 
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
 "" Vim-Plug settings
 call plug#begin('~/.vim/plugged')
 
 " VimTeX
 Plug 'lervag/vimtex'
-
-" Hylang
-Plug 'hylang/vim-hy'
-let g:hy_enable_conceal = 1
-let g:hy_conceal_fancy = 1
-
-" Vim Notes
-Plug 'xolox/vim-notes'
-Plug 'xolox/vim-misc'
-let g:notes_directories = ['~/Documents/notes']
-let g:notes_suffix = '.note.md'
-
-" Taskwarrior
-Plug 'blindFS/vim-taskwarrior'
-
-" notational velocity style fuzzy finder
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'https://github.com/alok/notational-fzf-vim'
-let g:nv_search_paths = ['~/Documents/notes/', './*.note.md']
-let g:nv_preview_direction = 'right'
-let g:nv_default_extension = g:notes_suffix
-let g:nv_window_width = '100%'
-let g:nv_create_note_key = 'ctrl-n'
-let g:nv_create_note_window = 'tabedit'
 
 " Gruvbox theme
 Plug 'morhetz/gruvbox'
