@@ -51,3 +51,6 @@ unset __conda_setup
 # <<< conda initialize <<<
 
 export PATH="/usr/local/opt/gnu-getopt/bin:$PATH"
+
+
+export EDITOR="vim"
