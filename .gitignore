@@ -1,1 +1,10 @@
 emacs.d/custom.el
+/emacs.d/auto-save-list/
+/emacs.d/elpa/
+*.elc
+/emacs.d/smex-items
+/emacs.d/recentf
+/emacs.d/transient/
+/emacs.d/request/
+/emacs.d/url/
+/emacs.d/init-template.el

@@ -3,85 +3,8 @@
 #+BABEL: :cache yes
 #+PROPERTY: header-args :tangle yes
 #+STARTUP: overview
+#+PROPERTY: header-args :tangle yes
 
-* Visuals
-** Aesthetics
-
-Focus colour
-#+begin_src emacs-lisp :tangle yes
-;; (set-face-attribute 'mode-line nil :background "NavajoWhite")
-;; (set-face-attribute 'mode-line-inactive nil :background "#FAFAFA")
-#+end_src
-
-Show full path in title bar.
-#+BEGIN_SRC emacs-lisp
-(setq-default line-spacing 0)
-(setq initial-frame-alist '((width . 135) (height . 55)))
-(tool-bar-mode -1)
-(setq-default frame-title-format "%b (%f)")
-#+END_SRC
-
-Simple mode line.
-#+BEGIN_SRC emacs-lisp
-(setq column-number-mode t) ;; show columns and rows in mode line
-#+END_SRC
-
-Font & pretty icons.
-#+begin_src emacs-lisp :tangle yes
-(when (member "Go Mono" (font-family-list))
-  (set-face-attribute 'default nil :font "Go Mono 14"))
-(setq-default line-spacing 1)
-(use-package all-the-icons)
-;; (use-package gruvbox-theme)
-;; (load-theme 'gruvbox-dark-soft)
-#+end_src
-
-Highlight current line.
-#+begin_src emacs-lisp :tangle yes
-(global-hl-line-mode 1)
-#+end_src
-
-Hide minor modes from modeline
-#+begin_src emacs-lisp :tangle yes
-(use-package rich-minority
-  :config
-  (rich-minority-mode 1)
-  (setf rm-blacklist ""))
-#+end_src
-
-#+RESULTS:
-: t
-** Functional
-Matching parenthesis appearance.
-#+BEGIN_SRC emacs-lisp
-(set-face-background 'show-paren-match "wheat")
-(set-face-attribute 'show-paren-match nil :weight 'extra-bold)
-(show-paren-mode)
-#+END_SRC
-
-Use spaces instead of tabs.
-#+BEGIN_SRC emacs-lisp
-(setq-default indent-tabs-mode nil)
-(setq-default c-basic-indent 2)
-(setq-default c-basic-offset 2)
-(setq-default tab-width 2)
-(setq tab-width 2)
-(setq js-indent-level 2)
-(setq css-indent-offset 2)
-(setq c-basic-offset 2)
-#+END_SRC
-
-Visual lines.
-#+BEGIN_SRC emacs-lisp
-(global-visual-line-mode t)
-#+END_SRC
-
-Vi-tilde fringes
-#+begin_src emacs-lisp :tangle yes
-(use-package vi-tilde-fringe
-  :config
-  (global-vi-tilde-fringe-mode 1))
-#+end_src
 * Meta
 ** Startup timer / Garbage collection
 
@@ -171,12 +94,102 @@ Emacs control is Ctrl. Emacs Super is Command. Emacs Meta is Alt. Right Alt (opt
 
 (setq mac-right-option-modifier 'nil)
 #+END_SRC
-** Server
+** After save hook
 #+begin_src emacs-lisp :tangle yes
-(unless (server-running-p) (server-start))
+(defun my/tangle-init ()
+  "If the current file is in '~/.dotfiles', the code blocks are tangled"
+  (when (equal buffer-file-name (file-truename (concat user-emacs-directory "init.org")))
+    (message "hello")
+      ;; load tangled init.el file and byte-compile it
+      (load-file (concat user-emacs-directory "init.el"))
+      (byte-compile-file (concat user-emacs-directory "init.el"))
+      (message "%s compiled" buffer-file-name)))
+
+(add-hook 'after-save-hook #'my/tangle-init)
+#+end_src
+
+#+begin_src emacs-lisp :tangle yes
+(equal buffer-file-name (file-truename (concat user-emacs-directory "init.org")))
+#+end_src
+* Visuals
+** Aesthetics
+
+Focus colour
+#+begin_src emacs-lisp :tangle yes
+;; (set-face-attribute 'mode-line nil :background "NavajoWhite")
+;; (set-face-attribute 'mode-line-inactive nil :background "#FAFAFA")
+#+end_src
+
+Show full path in title bar.
+#+BEGIN_SRC emacs-lisp
+(setq-default line-spacing 0)
+(setq initial-frame-alist '((width . 135) (height . 55)))
+(tool-bar-mode -1)
+(setq-default frame-title-format "%b (%f)")
+#+END_SRC
+
+Simple mode line.
+#+BEGIN_SRC emacs-lisp
+(setq column-number-mode t) ;; show columns and rows in mode line
+#+END_SRC
+
+Font & pretty icons.
+#+begin_src emacs-lisp :tangle yes
+(when (member "Go Mono" (font-family-list))
+  (set-face-attribute 'default nil :font "Go Mono 14"))
+(setq-default line-spacing 1)
+(use-package all-the-icons)
+;; (use-package gruvbox-theme)
+;; (load-theme 'gruvbox-dark-soft)
+#+end_src
+
+Highlight current line.
+#+begin_src emacs-lisp :tangle yes
+(global-hl-line-mode 1)
+#+end_src
+
+Hide minor modes from modeline
+#+begin_src emacs-lisp :tangle yes
+(use-package rich-minority
+  :config
+  (unless rich-minority-mode
+    (rich-minority-mode 1))
+  (setf rm-blacklist ""))
 #+end_src
 
 #+RESULTS:
+: t
+** Functional
+Matching parenthesis appearance.
+#+BEGIN_SRC emacs-lisp
+(set-face-background 'show-paren-match "wheat")
+(set-face-attribute 'show-paren-match nil :weight 'extra-bold)
+(show-paren-mode)
+#+END_SRC
+
+Use spaces instead of tabs.
+#+BEGIN_SRC emacs-lisp
+(setq-default indent-tabs-mode nil)
+(setq-default c-basic-indent 2)
+(setq-default c-basic-offset 2)
+(setq-default tab-width 2)
+(setq tab-width 2)
+(setq js-indent-level 2)
+(setq css-indent-offset 2)
+(setq c-basic-offset 2)
+#+END_SRC
+
+Visual lines.
+#+BEGIN_SRC emacs-lisp
+(global-visual-line-mode t)
+#+END_SRC
+
+Vi-tilde fringes
+#+begin_src emacs-lisp :tangle yes
+(use-package vi-tilde-fringe
+  :config
+  (global-vi-tilde-fringe-mode 1))
+#+end_src
 * Sane defaults
 ** Basics
 
@@ -633,6 +646,7 @@ Navigate to projects with =Cmd+Shift+P=
 Spell checking requires an external command to be available. Install aspell on your Mac, then make it the default checker for Emacs’ ispell. Note that personal dictionary is located at ~/.aspell.LANG.pws by default.
 #+BEGIN_SRC emacs-lisp
 (setq ispell-program-name "aspell")
+(defvar ispell-dictionary "en_GB")
 #+END_SRC
 
 Popup window for spellchecking
@@ -641,10 +655,11 @@ Popup window for spellchecking
 (use-package flyspell-correct-popup)
 #+end_src
 
-Enable spellcehck for all text modes. TODO: disable on start.
+Enable spellcheck for all text modes. TODO: disable on start.
 #+BEGIN_SRC emacs-lisp
-(add-hook 'text-mode-hook 'flyspell-mode)
-(add-hook 'prog-mode-hook 'flyspell-prog-mode)
+
+;; (add-hook 'text-mode-hook 'flyspell-mode)
+;; (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 #+END_SRC
 
 Enable right mouse click on macOS to see the list of suggestions.
@@ -653,11 +668,6 @@ Enable right mouse click on macOS to see the list of suggestions.
   '(progn
      (define-key flyspell-mouse-map [down-mouse-3] #'flyspell-correct-word)
      (define-key flyspell-mouse-map [mouse-3] #'undefined)))
-
-;; Spellcheck current word
-(define-key flyspell-mode-map (kbd "s-\\") 'flyspell-correct-previous-word-generic) ;; Cmd+\ spellcheck word with popup
-(define-key flyspell-mode-map (kbd "C-s-\\") 'ispell-word)                          ;; Ctrl+Cmd+\ spellcheck word using built UI
-
 #+end_src
 
 Synonym search is =Cmd+Shift+\=. It requires =wordnet=.
@@ -674,23 +684,14 @@ Word definition search.
   :config
   (global-set-key (kbd "M-\\") 'define-word-at-point))
 #+END_SRC
-* YASnippet
-
-#+BEGIN_SRC emacs-lisp
-
-  (use-package yasnippet
-    :config
-    (setq yas-snippet-dirs
-          '("~/.emacs.d/snippets"))
-    (yas-global-mode 1))
-
-#+END_SRC
 * Programming
 ** Formatting
-
 Format everything
 #+begin_src emacs-lisp :tangle yes
-  (use-package format-all)
+(use-package format-all
+  :config
+  (add-hook 'prog-mode-hook 'format-all-mode)
+  (global-set-key (kbd "M-S-l") 'format-all-buffer))
 #+end_src
 ** Completions
 #+begin_src emacs-lisp :tangle yes
@@ -701,6 +702,14 @@ Format everything
   (setq company-minimum-prefix-length 1)
   (add-hook 'after-init-hook 'global-company-mode))
 #+end_src
+** YASnippet
+#+BEGIN_SRC emacs-lisp
+  (use-package yasnippet
+    :config
+    (setq yas-snippet-dirs
+          '("~/.emacs.d/snippets"))
+    (yas-global-mode 1))
+#+END_SRC
 * Frames, windows, buffers
 Always open in the same frame
 #+begin_src emacs-lisp :tangle yes
@@ -815,7 +824,7 @@ Agenda and capture
 
 Install AucTeX
 #+begin_src emacs-lisp :tangle yes
-(use-package auctex)
+;; (use-package auctex)
 #+end_src
 
 #+RESULTS:
