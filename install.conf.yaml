@@ -18,11 +18,7 @@
     ~/.aliases: aliases
     ~/.functions: functions
     ~/.macos: macos
-    ~/brew.sh: brew.sh
-    ~/bootstrap.sh: bootstrap
     ~/.hushlogin: hushlogin
     ~/.gvimrc: gvimrc
     ~/.emacs.d: emacs.d
     ~/.doom.d : doom.d
-    ~/org: ~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents
-    ~/journal.txt: ~/Documents/journal.txt
