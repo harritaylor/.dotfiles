@@ -33,8 +33,6 @@ unset file;
 # [ -e "$HOME/.ssh/config" ] && complete -o "default" -o "nospace" -W "$(grep "^Host" ~/.ssh/config | grep -v "[?*]" | cut -d " " -f2- | tr ' ' '\n')" scp sftp ssh;
 
 
-
-
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
 __conda_setup="$('/Users/harrisontaylor/.conda/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
@@ -50,4 +48,13 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-export PATH="/usr/local/opt/gnu-getopt/bin:$PATH"
+# PyEnv
+#export PATH="/usr/local/opt/gnu-getopt/bin:$PATH"
+#if command -v pyenv 1>/dev/null 2>&1; then
+#  eval "$(pyenv init -)"
+#fi
+if command -v pyenv 1>/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi
+
+alias ssh="~/.ssh/colour.sh"
