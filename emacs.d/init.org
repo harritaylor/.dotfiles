@@ -26,21 +26,7 @@ Lexical scoping for the init-file is needed, it can be specified in the header. 
 #+END_SRC
 
 
-Tangle and compile this file on save automatically:
 
-#+BEGIN_SRC emacs-lisp
-(defun tangle-init ()
-  "If the current buffer is 'init.org' the code-blocks are
-tangled, and the tangled file is compiled."
-  (when (equal (buffer-file-name)
-               (expand-file-name (concat user-emacs-directory "init.org")))
-    ;; Avoid running hooks when tangling.
-    (let ((prog-mode-hook nil))
-      (org-babel-tangle)
-      (byte-compile-file (concat user-emacs-directory "init.el")))))
-
-(add-hook 'after-save-hook 'tangle-init)
-#+END_SRC
 
 
 This helps get rid of =functions might not be defined at runtime= warnings. See https://github.com/jwiegley/use-package/issues/590
@@ -95,22 +81,21 @@ Emacs control is Ctrl. Emacs Super is Command. Emacs Meta is Alt. Right Alt (opt
 (setq mac-right-option-modifier 'nil)
 #+END_SRC
 ** After save hook
+Tangle and compile this file on save automatically:
 #+begin_src emacs-lisp :tangle yes
-(defun my/tangle-init ()
-  "If the current file is in '~/.dotfiles', the code blocks are tangled"
-  (when (equal buffer-file-name (file-truename (concat user-emacs-directory "init.org")))
-    (message "hello")
-      ;; load tangled init.el file and byte-compile it
-      (load-file (concat user-emacs-directory "init.el"))
-      (byte-compile-file (concat user-emacs-directory "init.el"))
-      (message "%s compiled" buffer-file-name)))
+(defun tangle-init ()
+  "If the current buffer is 'init.org' the code-blocks are
+tangled, and the tangled file is compiled."
+  (when (equal (buffer-file-name)
+               (expand-file-name (concat user-emacs-directory "init.org")))
+    ;; Avoid running hooks when tangling.
+    (let ((prog-mode-hook nil))
+      (org-babel-tangle)
+      (byte-compile-file (concat user-emacs-directory "init.el")))))
 
-(add-hook 'after-save-hook #'my/tangle-init)
+(add-hook 'after-save-hook 'tangle-init)
 #+end_src
 
-#+begin_src emacs-lisp :tangle yes
-(equal buffer-file-name (file-truename (concat user-emacs-directory "init.org")))
-#+end_src
 * Visuals
 ** Aesthetics
 
