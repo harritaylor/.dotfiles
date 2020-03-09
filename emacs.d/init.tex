@@ -1,0 +1,832 @@
+% Created 2020-03-08 Sun 23:00
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\author{harritaylor}
+\date{\today}
+\title{Emacs configuration file}
+\hypersetup{
+ pdfauthor={harritaylor},
+ pdftitle={Emacs configuration file},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 26.3 (Org mode 9.1.9)},
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+
+\section{Meta / ETC}
+\label{sec:org798036b}
+\subsection{Startup timer}
+\label{sec:orga8da4a3}
+
+\begin{verbatim}
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (message "Emacs ready in %s with %d garbage collections."
+                     (format "%.2f seconds"
+                             (float-time
+                              (time-subtract after-init-time before-init-time)))
+                     gcs-done)))
+\end{verbatim}
+
+\subsection{GC}
+\label{sec:orge02c909}
+
+Lexical scoping for the init-file is needed, it can be specified in the header. Make startup faster by reducing the frequency of garbage collection.  The default is 800 kilobytes.  Measured in bytes. These are the first lines of the actual configuration.
+
+\begin{verbatim}
+;;; -*- lexical-binding: t -*-
+(setq gc-cons-threshold (* 50 1000 1000))
+\end{verbatim}
+
+
+Tangle and compile this file on save automatically:
+
+\begin{verbatim}
+(defun tangle-init ()
+  "If the current buffer is 'init.org' the code-blocks are
+tangled, and the tangled file is compiled."
+  (when (equal (buffer-file-name)
+               (expand-file-name (concat user-emacs-directory "init.org")))
+    ;; Avoid running hooks when tangling.
+    (let ((prog-mode-hook nil))
+      (org-babel-tangle)
+      (byte-compile-file (concat user-emacs-directory "init.el")))))
+
+(add-hook 'after-save-hook 'tangle-init)
+\end{verbatim}
+
+
+This helps get rid of \texttt{functions might not be defined at runtime} warnings. See \url{https://github.com/jwiegley/use-package/issues/590}
+
+\begin{verbatim}
+;; (eval-when-compile
+;;   (setq use-package-expand-minimally byte-compile-current-file))
+\end{verbatim}
+
+\subsection{Use package}
+\label{sec:org4399e9f}
+
+Initialize package and add Melpa source.
+
+\begin{verbatim}
+(require 'package)
+(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
+                 (not (gnutls-available-p))))
+    (proto (if no-ssl "http" "https")))
+
+    (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
+    ;;(add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
+
+    (when (< emacs-major-version 24)
+     ;; For important compatibility libraries like cl-lib
+      (add-to-list 'package-archives '("gnu" . (concat proto "://elpa.gnu.org/packages/")))))
+(package-initialize)
+\end{verbatim}
+
+Install use-package.
+
+\begin{verbatim}
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+(eval-when-compile (require 'use-package))
+(setq use-package-always-ensure t)
+
+;; this package is useful for overriding major mode keybindings
+(use-package bind-key)
+\end{verbatim}
+
+\subsection{Modifier keys}
+\label{sec:org29a2a05}
+
+Emacs control is Ctrl. Emacs Super is Command. Emacs Meta is Alt. Right Alt (option) can be used to enter symbols like em dashes \texttt{—}.
+
+\begin{verbatim}
+(setq mac-right-command-modifier 'super)
+(setq mac-command-modifier 'super)
+
+(setq mac-option-modifier 'meta)
+(setq mac-left-option-modifier 'meta)
+(setq mac-right-option-modifier 'meta)
+
+(setq mac-right-option-modifier 'nil)
+\end{verbatim}
+
+\section{Visuals}
+\label{sec:orgbb19406}
+
+\begin{verbatim}
+(setq-default line-spacing 0)
+
+(setq initial-frame-alist '((width . 135) (height . 55)))
+(tool-bar-mode -1)
+\end{verbatim}
+
+Matching parenthesis appearance.
+
+\begin{verbatim}
+(set-face-background 'show-paren-match "wheat")
+(set-face-attribute 'show-paren-match nil :weight 'extra-bold)
+(show-paren-mode)
+\end{verbatim}
+
+Simple mode line.
+
+\begin{verbatim}
+(setq column-number-mode t) ;; show columns and rows in mode line
+\end{verbatim}
+
+Show full path in title bar.
+
+\begin{verbatim}
+(setq-default frame-title-format "%b (%f)")
+\end{verbatim}
+
+Use spaces instead of tabs.
+
+\begin{verbatim}
+(setq-default indent-tabs-mode nil)
+(setq-default c-basic-indent 2)
+(setq-default c-basic-offset 2)
+(setq-default tab-width 2)
+(setq tab-width 2)
+(setq js-indent-level 2)
+(setq css-indent-offset 2)
+(setq c-basic-offset 2)
+\end{verbatim}
+
+Visual lines.
+
+\begin{verbatim}
+(global-visual-line-mode t)
+\end{verbatim}
+
+\section{Sane defaults}
+\label{sec:org52360fa}
+\subsection{Basics}
+\label{sec:orgd46fe8b}
+
+Autosave and backup are not useful.
+
+\begin{verbatim}
+(setq make-backup-files nil) ; stop creating backup~ files
+(setq auto-save-default nil) ; stop creating #autosave# files
+(setq create-lockfiles nil)  ; stop creating .# files
+\end{verbatim}
+
+Revert (update) buffers automatically when underlying files are changed externally.
+
+\begin{verbatim}
+(global-auto-revert-mode t)
+\end{verbatim}
+
+Basic things.
+
+\begin{verbatim}
+
+
+(setq
+ inhibit-startup-message t         ; Don't show the startup message
+ inhibit-startup-screen t          ; or screen
+ cursor-in-non-selected-windows t  ; Hide the cursor in inactive windows
+
+ echo-keystrokes 0.1               ; Show keystrokes right away, don't show the message in the scratch buffer
+ initial-scratch-message nil       ; Empty scratch buffer
+ sentence-end-double-space nil     ; Sentences should end in one space, come on!
+ ;; confirm-kill-emacs 'y-or-n-p      ; y and n instead of yes and no when quitting
+)
+
+(fset 'yes-or-no-p 'y-or-n-p)      ; y and n instead of yes and no everywhere else
+(scroll-bar-mode -1)
+(delete-selection-mode 1)
+(global-unset-key (kbd "s-p"))
+\end{verbatim}
+
+Emacs kill ring and system clipboard should be independant.
+\begin{verbatim}
+(use-package simpleclip
+  :init
+  (simpleclip-mode 1))
+\end{verbatim}
+
+Quickly switch to scratch buffer with \texttt{⌘+0}.
+
+\begin{verbatim}
+(global-set-key (kbd "s-0") (lambda ()
+                              (interactive)
+                              (if (string= (buffer-name) "*scratch*") (previous-buffer) (switch-to-buffer "*scratch*"))))
+\end{verbatim}
+
+\subsection{Which key}
+\label{sec:orgb795879}
+
+\begin{verbatim}
+(use-package which-key
+  :config
+  (which-key-mode)
+  (setq which-key-idle-delay 0.5))
+\end{verbatim}
+
+\subsection{OS Integration}
+\label{sec:org32774d9}
+
+Pass system shell environment to Emacs. This is important primarily for shell inside Emacs, but also things like Org mode export to Tex PDF don't work, since it relies on running external command \texttt{pdflatex}, which is loaded from \texttt{PATH}.
+
+\begin{verbatim}
+(use-package exec-path-from-shell
+  :config
+  (when (memq window-system '(mac ns))
+    (exec-path-from-shell-initialize)))
+\end{verbatim}
+
+Use \texttt{Cmd+i} to open the current folder in a new tab of Terminal:
+
+\begin{verbatim}
+(defun iterm-goto-filedir-or-home ()
+  "Go to present working dir and focus iterm"
+  (interactive)
+  (do-applescript
+   (concat
+    " tell application \"iTerm2\"\n"
+    "   tell current window\n"
+    "     create tab with profile \"Default\"\n"
+    "   end tell\n"
+    "   tell the current session of current window\n"
+    (format "     write text \"cd %s\" \n"
+            ;; string escaping madness for applescript
+            (replace-regexp-in-string "\\\\" "\\\\\\\\"
+                                      (shell-quote-argument (or default-directory "~"))))
+    "   end tell\n"
+    " end tell\n"
+    " do shell script \"open -a iTerm\"\n"
+    ))
+  )
+(global-set-key (kbd "s-i") 'iterm-goto-filedir-or-home)
+\end{verbatim}
+
+\subsection{Navigation and editing}
+\label{sec:orgf68bf93}
+Kill line with \texttt{Cmd-Backspace} (thanks to simpleclip, killing doesn't rewrite the system clipboard). Kill one word with \texttt{Alt-Backspace}. Also kill forward with \texttt{Alt-Shift-Backspace}.
+
+\begin{verbatim}
+(global-set-key (kbd "s-<backspace>") 'kill-whole-line)
+(global-set-key (kbd "s-<delete>") 'kill-whole-line)
+(global-set-key (kbd "M-S-<backspace>") 'kill-word)
+(global-set-key (kbd "M-<delete>") 'kill-word)
+(bind-key* "S-<delete>" 'kill-word)
+\end{verbatim}
+
+Use \texttt{cmd} for movement and selection just like in macOS.
+
+\begin{verbatim}
+(global-set-key (kbd "s-<right>") 'end-of-visual-line)
+(global-set-key (kbd "s-<left>") 'beginning-of-visual-line)
+
+(global-set-key (kbd "s-<up>") 'beginning-of-buffer)
+(global-set-key (kbd "s-<down>") 'end-of-buffer)
+
+(global-set-key (kbd "s-l") 'goto-line)
+\end{verbatim}
+
+macOS basics.
+
+\begin{verbatim}
+(global-set-key (kbd "s-a") 'mark-whole-buffer)       ;; select all
+(global-set-key (kbd "s-s") 'save-buffer)             ;; save
+(global-set-key (kbd "s-S") 'write-file)              ;; save as
+(global-set-key (kbd "s-q") 'save-buffers-kill-emacs) ;; quit
+\end{verbatim}
+
+Regular people undo-redo.
+
+\begin{verbatim}
+(use-package undo-fu)
+(global-unset-key (kbd "C-z"))
+(global-set-key (kbd "C-z")   'undo-fu-only-undo)
+(global-set-key (kbd "C-S-z") 'undo-fu-only-redo)
+(global-set-key (kbd "s-z")   'undo-fu-only-undo)
+(global-set-key (kbd "s-r")   'undo-fu-only-redo)
+\end{verbatim}
+
+Go back to previous mark (position) within buffer to go back (forward?).
+
+\begin{verbatim}
+(defun my-pop-local-mark-ring ()
+  (interactive)
+  (set-mark-command t))
+
+(defun unpop-to-mark-command ()
+  "Unpop off mark ring. Does nothing if mark ring is empty."
+  (interactive)
+      (when mark-ring
+        (setq mark-ring (cons (copy-marker (mark-marker)) mark-ring))
+        (set-marker (mark-marker) (car (last mark-ring)) (current-buffer))
+        (when (null (mark t)) (ding))
+        (setq mark-ring (nbutlast mark-ring))
+        (goto-char (marker-position (car (last mark-ring))))))
+
+(global-set-key (kbd "C-i") 'my-pop-local-mark-ring)
+(global-set-key (kbd "C-o") 'unpop-to-mark-command)
+\end{verbatim}
+
+Move between open buffers with ease.
+
+\begin{verbatim}
+(global-set-key (kbd "s-[") 'previous-buffer)
+(global-set-key (kbd "s-]") 'next-buffer)
+\end{verbatim}
+
+\begin{verbatim}
+(defun vsplit-last-buffer ()
+  (interactive)
+  (split-window-vertically)
+  (other-window 1 nil)
+  (switch-to-next-buffer))
+
+(defun hsplit-last-buffer ()
+  (interactive)
+  (split-window-horizontally)
+  (other-window 1 nil)
+  (switch-to-next-buffer))
+
+(global-set-key (kbd "s-w") (kbd "C-x 0")) ;; just like close tab in a web browser
+(global-set-key (kbd "s-W") (kbd "C-x 1")) ;; close others with shift
+
+(global-set-key (kbd "s-'") (kbd "C-x 2"))
+(global-set-key (kbd "s-5") (kbd "C-x 3"))
+
+(global-set-key (kbd "s-K") 'kill-this-buffer)
+
+;; (global-set-key (kbd "s-T") 'vsplit-last-buffer)
+;; (global-set-key (kbd "s-t") 'hsplit-last-buffer)
+\end{verbatim}
+
+Go to other windows easily with one keystroke \texttt{s-something} instead of \texttt{C-x something}.
+\texttt{Move-text} allows moving lines around with meta-up/down.
+
+\begin{verbatim}
+(eval-after-load "org"
+  '(progn (setq org-metaup-hook nil)
+   (setq org-metadown-hook nil)))
+
+(use-package move-text
+  :config
+  (move-text-default-bindings))
+\end{verbatim}
+
+Smarter open-line: Hit \texttt{cmd+return} to insert a new line below the current.
+
+\begin{verbatim}
+(defun smart-open-line ()
+  "Insert an empty line after the current line. Position the cursor at its beginning, according to the current mode."
+  (interactive)
+  (move-end-of-line nil)
+  (newline-and-indent))
+
+(defun smart-open-line-above ()
+  "Insert an empty line above the current line. Position the cursor at it's beginning, according to the current mode."
+  (interactive)
+  (move-beginning-of-line nil)
+  (newline-and-indent)
+  (forward-line -1)
+  (indent-according-to-mode))
+
+(global-set-key (kbd "s-<return>") 'smart-open-line)
+(global-set-key (kbd "s-S-<return>") 'smart-open-line-above)
+\end{verbatim}
+
+Join lines.
+
+\begin{verbatim}
+(defun smart-join-line (beg end)
+  "If in a region, join all the lines in it. If not, join the current line with the next line."
+  (interactive "r")
+  (if mark-active
+      (join-region beg end)
+      (top-join-line)))
+
+(defun top-join-line ()
+  "Join the current line with the next line."
+  (interactive)
+  (delete-indentation 1))
+
+(defun join-region (beg end)
+  "Join all the lines in the region."
+  (interactive "r")
+  (if mark-active
+      (let ((beg (region-beginning))
+            (end (copy-marker (region-end))))
+        (goto-char beg)
+        (while (< (point) end)
+          (join-line 1)))))
+
+(global-set-key (kbd "s-j") 'smart-join-line)
+\end{verbatim}
+
+Delete trailing spaces and add new line in the end of a file on save.
+
+\begin{verbatim}
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+(setq require-final-newline t)
+\end{verbatim}
+
+Allow shift selecting in org mode (I don't care about priority indicators).
+
+Multiple cursors are a must. Make \texttt{<return>} insert a newline; \texttt{multiple-cursors-mode} can still be disabled with \texttt{C-g}.
+
+\begin{verbatim}
+(use-package multiple-cursors
+  :config
+  (setq mc/always-run-for-all 1)
+  ;; (global-set-key (kbd "s-d") 'mc/mark-next-like-this)
+  ;; (global-set-key (kbd "C-s-g") 'mc/mark-all-dwim)
+  (define-key mc/keymap (kbd "<return>") nil)
+  (global-set-key (kbd "s-<mouse-1>") 'mc/add-cursor-on-click))
+\end{verbatim}
+
+Comment lines.
+
+\begin{verbatim}
+(global-set-key (kbd "s-/") 'comment-line)
+\end{verbatim}
+
+ESC as the universal "get me out of here" command.
+
+\begin{verbatim}
+(define-key key-translation-map (kbd "ESC") (kbd "C-g"))
+\end{verbatim}
+
+\subsection{Windows}
+\label{sec:orgf30635f}
+
+Automatic new windows are always on the bottom, not the side.
+
+\begin{verbatim}
+(setq split-height-threshold 0)
+(setq split-width-threshold nil)
+\end{verbatim}
+
+Move between windows with alt-tab
+
+\begin{verbatim}
+(global-set-key (kbd "M-<tab>") (kbd "C-x o"))
+\end{verbatim}
+
+Shackle to make sure all windows are nicely positioned.
+\begin{verbatim}
+(use-package shackle
+  :init
+  (setq shackle-default-alignment 'below
+        shackle-default-size 0.4
+        shackle-rules '((help-mode           :align below :select t)
+                        (helpful-mode        :align below)
+                        (compilation-mode    :select t   :size 0.25)
+                        ("*compilation*"     :select nil :size 0.25)
+                        ("*ag search*"       :select nil :size 0.25)
+                        ("*Flycheck errors*" :select nil :size 0.25)
+                        ("*Warnings*"        :select nil :size 0.25)
+                        ("*Error*"           :select nil :size 0.25)
+                        ("*Org Links*"       :select nil :size 0.1)
+                        (magit-status-mode                :align bottom :size 0.5  :inhibit-window-quit t)
+                        (magit-log-mode                   :same t                  :inhibit-window-quit t)
+                        (magit-commit-mode                :ignore t)
+                        (magit-diff-mode     :select nil  :align left   :size 0.5)
+                        (git-commit-mode                  :same t)
+                        (vc-annotate-mode                 :same t)
+                        ))
+  :config
+  (shackle-mode 1))
+\end{verbatim}
+
+\subsection{Edit indirect}
+\label{sec:orgce81f1c}
+
+Select any region and edit it in another buffer.
+
+\begin{verbatim}
+(use-package edit-indirect)
+\end{verbatim}
+
+\subsection{Ivy, Swiper and Counsel}
+\label{sec:org0c3ec85}
+
+Swiper
+
+\begin{verbatim}
+(use-package swiper
+  :config
+  (global-set-key (kbd "s-f") 'swiper-isearch))
+\end{verbatim}
+
+Ivy
+
+\begin{verbatim}
+
+(use-package ivy
+  :config
+  (ivy-mode 1)
+  (setq ivy-use-virtual-buffers t)
+  (setq ivy-count-format "(%d/%d) ")
+  (setq enable-recursive-minibuffers t)
+  (setq ivy-initial-inputs-alist nil)
+  (setq ivy-re-builders-alist
+      '((swiper . ivy--regex-plus)
+        (swiper-isearch . regexp-quote)
+        ;; (counsel-git . ivy--regex-plus)
+        ;; (counsel-ag . ivy--regex-plus)
+        (counsel-rg . ivy--regex-plus)
+        (t      . ivy--regex-fuzzy)))   ;; enable fuzzy searching everywhere except for Swiper and ag
+
+  (global-set-key (kbd "s-b") 'ivy-switch-buffer))
+
+
+(use-package ivy-rich
+  :config
+  (ivy-rich-mode 1)
+  (setq ivy-rich-path-style 'abbrev))
+
+\end{verbatim}
+
+Counsel
+
+\begin{verbatim}
+
+(use-package counsel
+  :config
+  (global-set-key (kbd "M-x") 'counsel-M-x)
+  (global-set-key (kbd "s-y") 'counsel-yank-pop)
+  (global-set-key (kbd "C-x C-f") 'counsel-find-file)
+  (global-set-key (kbd "s-F") 'counsel-rg)
+  (global-set-key (kbd "s-p") 'counsel-git))
+
+;; When using git ls (via counsel-git), include unstaged files
+(setq counsel-git-cmd "git ls-files -z --full-name --exclude-standard --others --cached --")
+
+(use-package smex)
+(use-package flx)
+
+
+\end{verbatim}
+\section{Git}
+\label{sec:org155b8a4}
+
+Magit time
+
+\begin{verbatim}
+
+  (use-package magit
+    :config
+    (global-set-key (kbd "s-g") 'magit-status))
+  (use-package magit-todos)
+
+  (use-package hl-todo
+    :config
+    (setq hl-todo-keyword-faces
+        '(("TODO"   . "#FF0000")
+          ("FIXME"  . "#FF0000")
+          ("DEBUG"  . "#A020F0")
+          ("GOTCHA" . "#FF4500")
+          ("STUB"   . "#1E90FF"))))
+\end{verbatim}
+
+Navigate to projects with \texttt{Cmd+Shift+P}
+
+\begin{verbatim}
+
+(setq magit-repository-directories '(("\~/Projects/" . 4)))
+
+(defun magit-status-with-prefix-arg ()
+  "Call `magit-status` with a prefix."
+  (interactive)
+  (let ((current-prefix-arg '(4)))
+    (call-interactively #'magit-status)))
+
+(global-set-key (kbd "s-P") 'magit-status-with-prefix-arg)
+
+\end{verbatim}
+
+\section{Spell checking}
+\label{sec:orgb71aaec}
+Spell checking requires an external command to be available. Install aspell on your Mac, then make it the default checker for Emacs’ ispell. Note that personal dictionary is located at \textasciitilde{}/.aspell.LANG.pws by default.
+
+\begin{verbatim}
+
+(setq ispell-program-name "aspell")
+
+\end{verbatim}
+
+Enable spellcehck for all text modes. TODO: disable on start.
+
+\begin{verbatim}
+
+(add-hook 'text-mode-hook 'flyspell-mode)
+(global-set-key (kbd "s-\\") 'ispell-word)
+
+\end{verbatim}
+
+\section{Thesaurus}
+\label{sec:org3d7770d}
+Synonym search is \texttt{Cmd+Shift+\textbackslash{}}. It requires \texttt{wordnet}.
+
+\begin{verbatim}
+(use-package powerthesaurus
+  :config
+  (global-set-key (kbd "s-|") 'powerthesaurus-lookup-word-dwim)
+  )
+\end{verbatim}
+
+Word definition search.
+
+\begin{verbatim}
+
+(use-package define-word
+  :config
+  (global-set-key (kbd "M-\\") 'define-word-at-point))
+
+\end{verbatim}
+
+\begin{verbatim}
+
+  ;; (read-abbrev-file abbrev-file-name t)
+  ;; (setq-default abbrev-mode t)
+
+\end{verbatim}
+
+\section{YASnippet}
+\label{sec:orgd24f4d3}
+
+\begin{verbatim}
+
+  (use-package yasnippet
+    :config
+    (setq yas-snippet-dirs
+          '("~/.emacs.d/snippets"))
+    (yas-global-mode 1))
+
+\end{verbatim}
+
+\section{Markdown}
+\label{sec:org8887cba}
+Let's see what this does\ldots{}
+
+\begin{verbatim}
+
+  (use-package markdown-mode
+    :mode (("README\\.md\\'" . gfm-mode)
+           ("\\.md\\'" . markdown-mode)
+           ("\\.markdown\\'" . markdown-mode))
+    :init (setq markdown-command "pandoc --no-highlight"))
+
+  (eval-after-load 'markdown-mode
+    `(define-key markdown-mode-map (kbd "C-s-<down>") 'markdown-narrow-to-subtree))
+
+  (eval-after-load 'markdown-mode
+    `(define-key markdown-mode-map (kbd "C-s-<up>") 'widen))
+
+  (eval-after-load 'markdown-mode
+    `(define-key markdown-mode-map (kbd "s-O") (lambda ()
+                                                 (interactive)
+                                                 (markdown-kill-ring-save)
+                                                 (let ((oldbuf (current-buffer)))
+                                                   (save-current-buffer
+                                                     (set-buffer "*markdown-output*")
+                                                     (with-no-warnings (mark-whole-buffer))
+                                                     (simpleclip-copy (point-min) (point-max)))))))
+
+  ;; Export without the first line (usually there's a header)
+  (eval-after-load 'markdown-mode
+    `(define-key markdown-mode-map (kbd "M-s-O") (lambda ()
+                                                 (interactive)
+                                                 (markdown-kill-ring-save)
+                                                 (let ((oldbuf (current-buffer)))
+                                                   (save-current-buffer
+                                                     (set-buffer "*markdown-output*")
+                                                     (goto-char (point-min))
+                                                     (kill-whole-line)
+                                                     (with-no-warnings (mark-whole-buffer))
+                                                     (simpleclip-copy (point-min) (point-max)))))))
+\end{verbatim}
+\section{Programming}
+\label{sec:org09db9bd}
+\subsection{Formatting}
+\label{sec:org175ae45}
+
+Format everything
+\begin{verbatim}
+  (use-package format-all)
+\end{verbatim}
+
+\section{Frames, windows, buffers}
+\label{sec:org237dbdb}
+Always open in the same frame
+\begin{verbatim}
+  (setq ns-pop-up-frames nil)
+\end{verbatim}
+
+\section{Org}
+\label{sec:orga777143}
+
+Visually indent sections, which looks better for smaller files etc.
+
+\begin{verbatim}
+(setq org-startup-indented t)
+(setq org-catch-invisible-edits 'error)
+(setq org-cycle-separator-lines -1)
+(setq calendar-week-start-day 1)
+(setq org-ellipsis "⤵")
+(setq org-support-shift-select t)
+\end{verbatim}
+
+org files
+\begin{verbatim}
+(setq org-directory "~/org")
+(setq org-agenda-files '("~/org"))
+
+(setq org-refile-targets (quote ((nil :maxlevel . 9)
+                                 (org-agenda-files :maxlevel . 9))))
+\end{verbatim}
+
+Code block indentation should be correct depending on language, including code highlighting.
+
+\begin{verbatim}
+
+(setq org-src-tab-acts-natively t)
+(setq org-src-preserve-indentation t)
+(setq org-src-fontify-natively t)
+
+\end{verbatim}
+
+Export to HTML
+\begin{verbatim}
+(use-package htmlize)
+\end{verbatim}
+
+Etc from \url{https://github.com/freetonik/emacs-dotfiles/blob/master/init.org}
+
+\begin{verbatim}
+  (with-eval-after-load 'org
+    ;; no shift or alt with arrows
+    (define-key org-mode-map (kbd "<S-left>") nil)
+    (define-key org-mode-map (kbd "<S-right>") nil)
+    (define-key org-mode-map (kbd "<M-left>") nil)
+    (define-key org-mode-map (kbd "<M-right>") nil)
+    ;; no shift-alt with arrows
+    (define-key org-mode-map (kbd "<M-S-left>") nil)
+    (define-key org-mode-map (kbd "<M-S-right>") nil)
+
+    (define-key org-mode-map (kbd "C-s-<left>") 'org-metaleft)
+    (define-key org-mode-map (kbd "C-s-<right>") 'org-metaright))
+
+  (setq org-use-speed-commands t)
+
+  (with-eval-after-load 'org
+    (define-key org-mode-map (kbd "C-s-<down>") 'org-narrow-to-subtree)
+    (define-key org-mode-map (kbd "C-s-<up>") 'widen))
+\end{verbatim}
+
+Agenda and capture
+\begin{verbatim}
+(global-set-key (kbd "C-c c") 'org-capture)
+(global-set-key (kbd "s-=") 'org-capture)
+(global-set-key "\C-ca" 'org-agenda)
+\end{verbatim}
+\subsection{Latex}
+\label{sec:orgdf6c3c3}
+\begin{verbatim}
+
+(require 'ox-latex)
+(setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
+(setq org-highlight-latex-and-related '(latex))
+(with-eval-after-load 'ox-latex
+  (add-to-list
+   'org-latex-classes
+   '("tufte-book"
+
+     "\\documentclass{tufte-book}
+     \\input{/users/rakhim/.emacs.d/latex/tufte.tex}"
+     ("\\part{%s}" . "\\part*{%s}")
+     ("\\chapter{%s}" . "\\chapter*{%s}")
+     ("\\section{%s}" . "\\section*{%s}")
+     ("\\subsection{%s}" . "\\subsection*{%s}")
+     ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
+
+\end{verbatim}
+\end{document}

@@ -1,0 +1,1287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2020-03-08 Sun 22:55 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Emacs configuration file</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="harritaylor" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2019 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Emacs configuration file</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgea28269">1. Meta / ETC</a>
+<ul>
+<li><a href="#org03e3ff6">1.1. Startup timer</a></li>
+<li><a href="#org9c29e76">1.2. GC</a></li>
+<li><a href="#orgf521096">1.3. Use package</a></li>
+<li><a href="#org411db8b">1.4. Modifier keys</a></li>
+</ul>
+</li>
+<li><a href="#orgf024224">2. Visuals</a></li>
+<li><a href="#org1838c75">3. Sane defaults</a>
+<ul>
+<li><a href="#orgaf70ac3">3.1. Basics</a></li>
+<li><a href="#orgadc993a">3.2. Which key</a></li>
+<li><a href="#orgefe695b">3.3. OS Integration</a></li>
+<li><a href="#org7212a8c">3.4. Navigation and editing</a></li>
+<li><a href="#org2843025">3.5. Windows</a></li>
+<li><a href="#orga89ca1a">3.6. Edit indirect</a></li>
+<li><a href="#org474e7b4">3.7. Ivy, Swiper and Counsel</a></li>
+</ul>
+</li>
+<li><a href="#org73b5298">4. Git</a></li>
+<li><a href="#org2af165b">5. Spell checking</a></li>
+<li><a href="#orga4bf233">6. Thesaurus</a></li>
+<li><a href="#orgd32dc50">7. YASnippet</a></li>
+<li><a href="#org7d4120a">8. Markdown</a></li>
+<li><a href="#orge9d922e">9. Programming</a>
+<ul>
+<li><a href="#orgf28f8fd">9.1. Formatting</a></li>
+</ul>
+</li>
+<li><a href="#org4e23b49">10. Frames, windows, buffers</a></li>
+<li><a href="#org98a3b33">11. Org</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgea28269" class="outline-2">
+<h2 id="orgea28269"><span class="section-number-2">1</span> Meta / ETC</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-org03e3ff6" class="outline-3">
+<h3 id="org03e3ff6"><span class="section-number-3">1.1</span> Startup timer</h3>
+<div class="outline-text-3" id="text-1-1">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(add-hook 'emacs-startup-hook
+          (<span style="color: #00ffff;">lambda</span> ()
+            (message <span style="color: #ffa07a;">"Emacs ready in %s with %d garbage collections."</span>
+                     (format <span style="color: #ffa07a;">"%.2f seconds"</span>
+                             (float-time
+                              (time-subtract after-init-time before-init-time)))
+                     gcs-done)))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9c29e76" class="outline-3">
+<h3 id="org9c29e76"><span class="section-number-3">1.2</span> GC</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+Lexical scoping for the init-file is needed, it can be specified in the header. Make startup faster by reducing the frequency of garbage collection.  The default is 800 kilobytes.  Measured in bytes. These are the first lines of the actual configuration.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #ff7f24;">;;; </span><span style="color: #ff7f24;">-*- lexical-binding: t -*-</span>
+(<span style="color: #00ffff;">setq</span> gc-cons-threshold (* 50 1000 1000))
+</pre>
+</div>
+
+
+<p>
+Tangle and compile this file on save automatically:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #00ffff;">defun</span> <span style="color: #87cefa;">tangle-init</span> ()
+  <span style="color: #ffa07a;">"If the current buffer is 'init.org' the code-blocks are</span>
+<span style="color: #ffa07a;">tangled, and the tangled file is compiled."</span>
+  (<span style="color: #00ffff;">when</span> (equal (buffer-file-name)
+               (expand-file-name (concat user-emacs-directory <span style="color: #ffa07a;">"init.org"</span>)))
+    <span style="color: #ff7f24;">;; </span><span style="color: #ff7f24;">Avoid running hooks when tangling.</span>
+    (<span style="color: #00ffff;">let</span> ((prog-mode-hook nil))
+      (org-babel-tangle)
+      (byte-compile-file (concat user-emacs-directory <span style="color: #ffa07a;">"init.el"</span>)))))
+
+(add-hook 'after-save-hook 'tangle-init)
+</pre>
+</div>
+
+
+<p>
+This helps get rid of <code>functions might not be defined at runtime</code> warnings. See <a href="https://github.com/jwiegley/use-package/issues/590">https://github.com/jwiegley/use-package/issues/590</a>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #ff7f24;">;; </span><span style="color: #ff7f24;">(eval-when-compile</span>
+<span style="color: #ff7f24;">;;   </span><span style="color: #ff7f24;">(setq use-package-expand-minimally byte-compile-current-file))</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf521096" class="outline-3">
+<h3 id="orgf521096"><span class="section-number-3">1.3</span> Use package</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+Initialize package and add Melpa source.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #00ffff;">require</span> '<span style="color: #7fffd4;">package</span>)
+(<span style="color: #00ffff;">let*</span> ((no-ssl (<span style="color: #00ffff;">and</span> (memq system-type '(windows-nt ms-dos))
+                 (not (gnutls-available-p))))
+    (proto (<span style="color: #00ffff;">if</span> no-ssl <span style="color: #ffa07a;">"http"</span> <span style="color: #ffa07a;">"https"</span>)))
+
+    (add-to-list 'package-archives (cons <span style="color: #ffa07a;">"melpa"</span> (concat proto <span style="color: #ffa07a;">"://melpa.org/packages/"</span>)) t)
+    <span style="color: #ff7f24;">;;</span><span style="color: #ff7f24;">(add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)</span>
+
+    (<span style="color: #00ffff;">when</span> (&lt; emacs-major-version 24)
+     <span style="color: #ff7f24;">;; </span><span style="color: #ff7f24;">For important compatibility libraries like cl-lib</span>
+      (add-to-list 'package-archives '(<span style="color: #ffa07a;">"gnu"</span> . (concat proto <span style="color: #ffa07a;">"://elpa.gnu.org/packages/"</span>)))))
+(package-initialize)
+</pre>
+</div>
+
+<p>
+Install use-package.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #00ffff;">unless</span> (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+(<span style="color: #00ffff;">eval-when-compile</span> (<span style="color: #00ffff;">require</span> '<span style="color: #7fffd4;">use-package</span>))
+(<span style="color: #00ffff;">setq</span> use-package-always-ensure t)
+
+<span style="color: #ff7f24;">;; </span><span style="color: #ff7f24;">this package is useful for overriding major mode keybindings</span>
+(<span style="color: #00ffff;">use-package</span> <span style="color: #7fffd4;">bind-key</span>)
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org411db8b" class="outline-3">
+<h3 id="org411db8b"><span class="section-number-3">1.4</span> Modifier keys</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+Emacs control is Ctrl. Emacs Super is Command. Emacs Meta is Alt. Right Alt (option) can be used to enter symbols like em dashes <code>—</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #00ffff;">setq</span> mac-right-command-modifier 'super)
+(<span style="color: #00ffff;">setq</span> mac-command-modifier 'super)
+
+(<span style="color: #00ffff;">setq</span> mac-option-modifier 'meta)
+(<span style="color: #00ffff;">setq</span> mac-left-option-modifier 'meta)
+(<span style="color: #00ffff;">setq</span> mac-right-option-modifier 'meta)
+
+(<span style="color: #00ffff;">setq</span> mac-right-option-modifier 'nil)
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf024224" class="outline-2">
+<h2 id="orgf024224"><span class="section-number-2">2</span> Visuals</h2>
+<div class="outline-text-2" id="text-2">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #00ffff;">setq-default</span> line-spacing 0)
+
+(<span style="color: #00ffff;">setq</span> initial-frame-alist '((width . 135) (height . 55)))
+(tool-bar-mode -1)
+</pre>
+</div>
+
+<p>
+Matching parenthesis appearance.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(set-face-background 'show-paren-match <span style="color: #ffa07a;">"wheat"</span>)
+(set-face-attribute 'show-paren-match nil <span style="color: #b0c4de;">:weight</span> 'extra-bold)
+(show-paren-mode)
+</pre>
+</div>
+
+<p>
+Simple mode line.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #00ffff;">setq</span> column-number-mode t) <span style="color: #ff7f24;">;; </span><span style="color: #ff7f24;">show columns and rows in mode line</span>
+</pre>
+</div>
+
+<p>
+Show full path in title bar.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #00ffff;">setq-default</span> frame-title-format <span style="color: #ffa07a;">"%b (%f)"</span>)
+</pre>
+</div>
+
+<p>
+Use spaces instead of tabs.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #00ffff;">setq-default</span> indent-tabs-mode nil)
+(<span style="color: #00ffff;">setq-default</span> c-basic-indent 2)
+(<span style="color: #00ffff;">setq-default</span> c-basic-offset 2)
+(<span style="color: #00ffff;">setq-default</span> tab-width 2)
+(<span style="color: #00ffff;">setq</span> tab-width 2)
+(<span style="color: #00ffff;">setq</span> js-indent-level 2)
+(<span style="color: #00ffff;">setq</span> css-indent-offset 2)
+(<span style="color: #00ffff;">setq</span> c-basic-offset 2)
+</pre>
+</div>
+
+<p>
+Visual lines.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(global-visual-line-mode t)
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1838c75" class="outline-2">
+<h2 id="org1838c75"><span class="section-number-2">3</span> Sane defaults</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-orgaf70ac3" class="outline-3">
+<h3 id="orgaf70ac3"><span class="section-number-3">3.1</span> Basics</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+Autosave and backup are not useful.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #00ffff;">setq</span> make-backup-files nil) <span style="color: #ff7f24;">; </span><span style="color: #ff7f24;">stop creating backup~ files</span>
+(<span style="color: #00ffff;">setq</span> auto-save-default nil) <span style="color: #ff7f24;">; </span><span style="color: #ff7f24;">stop creating #autosave# files</span>
+(<span style="color: #00ffff;">setq</span> create-lockfiles nil)  <span style="color: #ff7f24;">; </span><span style="color: #ff7f24;">stop creating .# files</span>
+</pre>
+</div>
+
+<p>
+Revert (update) buffers automatically when underlying files are changed externally.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(global-auto-revert-mode t)
+</pre>
+</div>
+
+<p>
+Basic things.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
+
+(<span style="color: #00ffff;">setq</span>
+ inhibit-startup-message t         <span style="color: #ff7f24;">; </span><span style="color: #ff7f24;">Don't show the startup message</span>
+ inhibit-startup-screen t          <span style="color: #ff7f24;">; </span><span style="color: #ff7f24;">or screen</span>
+ cursor-in-non-selected-windows t  <span style="color: #ff7f24;">; </span><span style="color: #ff7f24;">Hide the cursor in inactive windows</span>
+
+ echo-keystrokes 0.1               <span style="color: #ff7f24;">; </span><span style="color: #ff7f24;">Show keystrokes right away, don't show the message in the scratch buffer</span>
+ initial-scratch-message nil       <span style="color: #ff7f24;">; </span><span style="color: #ff7f24;">Empty scratch buffer</span>
+ sentence-end-double-space nil     <span style="color: #ff7f24;">; </span><span style="color: #ff7f24;">Sentences should end in one space, come on!</span>
+ <span style="color: #ff7f24;">;; </span><span style="color: #ff7f24;">confirm-kill-emacs 'y-or-n-p      ; y and n instead of yes and no when quitting</span>
+)
+
+(fset 'yes-or-no-p 'y-or-n-p)      <span style="color: #ff7f24;">; </span><span style="color: #ff7f24;">y and n instead of yes and no everywhere else</span>
+(scroll-bar-mode -1)
+(delete-selection-mode 1)
+(global-unset-key (kbd <span style="color: #ffa07a;">"s-p"</span>))
+</pre>
+</div>
+
+<p>
+Emacs kill ring and system clipboard should be independant.
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #00ffff;">use-package</span> <span style="color: #7fffd4;">simpleclip</span>
+  <span style="color: #b0c4de;">:init</span>
+  (simpleclip-mode 1))
+</pre>
+</div>
+
+<p>
+Quickly switch to scratch buffer with <code>⌘+0</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(global-set-key (kbd <span style="color: #ffa07a;">"s-0"</span>) (<span style="color: #00ffff;">lambda</span> ()
+                              (<span style="color: #00ffff;">interactive</span>)
+                              (<span style="color: #00ffff;">if</span> (string= (buffer-name) <span style="color: #ffa07a;">"*scratch*"</span>) (previous-buffer) (switch-to-buffer <span style="color: #ffa07a;">"*scratch*"</span>))))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgadc993a" class="outline-3">
+<h3 id="orgadc993a"><span class="section-number-3">3.2</span> Which key</h3>
+<div class="outline-text-3" id="text-3-2">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #00ffff;">use-package</span> <span style="color: #7fffd4;">which-key</span>
+  <span style="color: #b0c4de;">:config</span>
+  (which-key-mode)
+  (<span style="color: #00ffff;">setq</span> which-key-idle-delay 0.5))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgefe695b" class="outline-3">
+<h3 id="orgefe695b"><span class="section-number-3">3.3</span> OS Integration</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+Pass system shell environment to Emacs. This is important primarily for shell inside Emacs, but also things like Org mode export to Tex PDF don't work, since it relies on running external command <code>pdflatex</code>, which is loaded from <code>PATH</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #00ffff;">use-package</span> <span style="color: #7fffd4;">exec-path-from-shell</span>
+  <span style="color: #b0c4de;">:config</span>
+  (<span style="color: #00ffff;">when</span> (memq window-system '(mac ns))
+    (exec-path-from-shell-initialize)))
+</pre>
+</div>
+
+<p>
+Use <code>Cmd+i</code> to open the current folder in a new tab of Terminal:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #00ffff;">defun</span> <span style="color: #87cefa;">iterm-goto-filedir-or-home</span> ()
+  <span style="color: #ffa07a;">"Go to present working dir and focus iterm"</span>
+  (<span style="color: #00ffff;">interactive</span>)
+  (do-applescript
+   (concat
+    <span style="color: #ffa07a;">" tell application \"iTerm2\"\n"</span>
+    <span style="color: #ffa07a;">"   tell current window\n"</span>
+    <span style="color: #ffa07a;">"     create tab with profile \"Default\"\n"</span>
+    <span style="color: #ffa07a;">"   end tell\n"</span>
+    <span style="color: #ffa07a;">"   tell the current session of current window\n"</span>
+    (format <span style="color: #ffa07a;">"     write text \"cd %s\" \n"</span>
+            <span style="color: #ff7f24;">;; </span><span style="color: #ff7f24;">string escaping madness for applescript</span>
+            (replace-regexp-in-string <span style="color: #ffa07a;">"\\\\"</span> <span style="color: #ffa07a;">"\\\\\\\\"</span>
+                                      (shell-quote-argument (<span style="color: #00ffff;">or</span> default-directory <span style="color: #ffa07a;">"~"</span>))))
+    <span style="color: #ffa07a;">"   end tell\n"</span>
+    <span style="color: #ffa07a;">" end tell\n"</span>
+    <span style="color: #ffa07a;">" do shell script \"open -a iTerm\"\n"</span>
+    ))
+  )
+(global-set-key (kbd <span style="color: #ffa07a;">"s-i"</span>) 'iterm-goto-filedir-or-home)
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org7212a8c" class="outline-3">
+<h3 id="org7212a8c"><span class="section-number-3">3.4</span> Navigation and editing</h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+Kill line with <code>Cmd-Backspace</code> (thanks to simpleclip, killing doesn't rewrite the system clipboard). Kill one word with <code>Alt-Backspace</code>. Also kill forward with <code>Alt-Shift-Backspace</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(global-set-key (kbd <span style="color: #ffa07a;">"s-&lt;backspace&gt;"</span>) 'kill-whole-line)
+(global-set-key (kbd <span style="color: #ffa07a;">"s-&lt;delete&gt;"</span>) 'kill-whole-line)
+(global-set-key (kbd <span style="color: #ffa07a;">"M-S-&lt;backspace&gt;"</span>) 'kill-word)
+(global-set-key (kbd <span style="color: #ffa07a;">"M-&lt;delete&gt;"</span>) 'kill-word)
+(<span style="color: #00ffff;">bind-key*</span> <span style="color: #ffa07a;">"S-&lt;delete&gt;"</span> 'kill-word)
+</pre>
+</div>
+
+<p>
+Use <code>cmd</code> for movement and selection just like in macOS.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(global-set-key (kbd <span style="color: #ffa07a;">"s-&lt;right&gt;"</span>) 'end-of-visual-line)
+(global-set-key (kbd <span style="color: #ffa07a;">"s-&lt;left&gt;"</span>) 'beginning-of-visual-line)
+
+(global-set-key (kbd <span style="color: #ffa07a;">"s-&lt;up&gt;"</span>) 'beginning-of-buffer)
+(global-set-key (kbd <span style="color: #ffa07a;">"s-&lt;down&gt;"</span>) 'end-of-buffer)
+
+(global-set-key (kbd <span style="color: #ffa07a;">"s-l"</span>) 'goto-line)
+</pre>
+</div>
+
+<p>
+macOS basics.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(global-set-key (kbd <span style="color: #ffa07a;">"s-a"</span>) 'mark-whole-buffer)       <span style="color: #ff7f24;">;; </span><span style="color: #ff7f24;">select all</span>
+(global-set-key (kbd <span style="color: #ffa07a;">"s-s"</span>) 'save-buffer)             <span style="color: #ff7f24;">;; </span><span style="color: #ff7f24;">save</span>
+(global-set-key (kbd <span style="color: #ffa07a;">"s-S"</span>) 'write-file)              <span style="color: #ff7f24;">;; </span><span style="color: #ff7f24;">save as</span>
+(global-set-key (kbd <span style="color: #ffa07a;">"s-q"</span>) 'save-buffers-kill-emacs) <span style="color: #ff7f24;">;; </span><span style="color: #ff7f24;">quit</span>
+</pre>
+</div>
+
+<p>
+Regular people undo-redo.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #00ffff;">use-package</span> <span style="color: #7fffd4;">undo-fu</span>)
+(global-unset-key (kbd <span style="color: #ffa07a;">"C-z"</span>))
+(global-set-key (kbd <span style="color: #ffa07a;">"C-z"</span>)   'undo-fu-only-undo)
+(global-set-key (kbd <span style="color: #ffa07a;">"C-S-z"</span>) 'undo-fu-only-redo)
+(global-set-key (kbd <span style="color: #ffa07a;">"s-z"</span>)   'undo-fu-only-undo)
+(global-set-key (kbd <span style="color: #ffa07a;">"s-r"</span>)   'undo-fu-only-redo)
+</pre>
+</div>
+
+<p>
+Go back to previous mark (position) within buffer to go back (forward?).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #00ffff;">defun</span> <span style="color: #87cefa;">my-pop-local-mark-ring</span> ()
+  (<span style="color: #00ffff;">interactive</span>)
+  (set-mark-command t))
+
+(<span style="color: #00ffff;">defun</span> <span style="color: #87cefa;">unpop-to-mark-command</span> ()
+  <span style="color: #ffa07a;">"Unpop off mark ring. Does nothing if mark ring is empty."</span>
+  (<span style="color: #00ffff;">interactive</span>)
+      (<span style="color: #00ffff;">when</span> mark-ring
+        (<span style="color: #00ffff;">setq</span> mark-ring (cons (copy-marker (mark-marker)) mark-ring))
+        (set-marker (mark-marker) (car (last mark-ring)) (current-buffer))
+        (<span style="color: #00ffff;">when</span> (null (mark t)) (ding))
+        (<span style="color: #00ffff;">setq</span> mark-ring (nbutlast mark-ring))
+        (goto-char (marker-position (car (last mark-ring))))))
+
+(global-set-key (kbd <span style="color: #ffa07a;">"C-i"</span>) 'my-pop-local-mark-ring)
+(global-set-key (kbd <span style="color: #ffa07a;">"C-o"</span>) 'unpop-to-mark-command)
+</pre>
+</div>
+
+<p>
+Move between open buffers with ease.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(global-set-key (kbd <span style="color: #ffa07a;">"s-["</span>) 'previous-buffer)
+(global-set-key (kbd <span style="color: #ffa07a;">"s-]"</span>) 'next-buffer)
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #00ffff;">defun</span> <span style="color: #87cefa;">vsplit-last-buffer</span> ()
+  (<span style="color: #00ffff;">interactive</span>)
+  (split-window-vertically)
+  (other-window 1 nil)
+  (switch-to-next-buffer))
+
+(<span style="color: #00ffff;">defun</span> <span style="color: #87cefa;">hsplit-last-buffer</span> ()
+  (<span style="color: #00ffff;">interactive</span>)
+  (split-window-horizontally)
+  (other-window 1 nil)
+  (switch-to-next-buffer))
+
+(global-set-key (kbd <span style="color: #ffa07a;">"s-w"</span>) (kbd <span style="color: #ffa07a;">"C-x 0"</span>)) <span style="color: #ff7f24;">;; </span><span style="color: #ff7f24;">just like close tab in a web browser</span>
+(global-set-key (kbd <span style="color: #ffa07a;">"s-W"</span>) (kbd <span style="color: #ffa07a;">"C-x 1"</span>)) <span style="color: #ff7f24;">;; </span><span style="color: #ff7f24;">close others with shift</span>
+
+(global-set-key (kbd <span style="color: #ffa07a;">"s-'"</span>) (kbd <span style="color: #ffa07a;">"C-x 2"</span>))
+(global-set-key (kbd <span style="color: #ffa07a;">"s-5"</span>) (kbd <span style="color: #ffa07a;">"C-x 3"</span>))
+
+(global-set-key (kbd <span style="color: #ffa07a;">"s-K"</span>) 'kill-this-buffer)
+
+<span style="color: #ff7f24;">;; </span><span style="color: #ff7f24;">(global-set-key (kbd "s-T") 'vsplit-last-buffer)</span>
+<span style="color: #ff7f24;">;; </span><span style="color: #ff7f24;">(global-set-key (kbd "s-t") 'hsplit-last-buffer)</span>
+</pre>
+</div>
+
+<p>
+Go to other windows easily with one keystroke <code>s-something</code> instead of <code>C-x something</code>.
+<code>Move-text</code> allows moving lines around with meta-up/down.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(eval-after-load <span style="color: #ffa07a;">"org"</span>
+  '(<span style="color: #00ffff;">progn</span> (<span style="color: #00ffff;">setq</span> org-metaup-hook nil)
+   (<span style="color: #00ffff;">setq</span> org-metadown-hook nil)))
+
+(<span style="color: #00ffff;">use-package</span> <span style="color: #7fffd4;">move-text</span>
+  <span style="color: #b0c4de;">:config</span>
+  (move-text-default-bindings))
+</pre>
+</div>
+
+<p>
+Smarter open-line: Hit <code>cmd+return</code> to insert a new line below the current.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #00ffff;">defun</span> <span style="color: #87cefa;">smart-open-line</span> ()
+  <span style="color: #ffa07a;">"Insert an empty line after the current line. Position the cursor at its beginning, according to the current mode."</span>
+  (<span style="color: #00ffff;">interactive</span>)
+  (move-end-of-line nil)
+  (newline-and-indent))
+
+(<span style="color: #00ffff;">defun</span> <span style="color: #87cefa;">smart-open-line-above</span> ()
+  <span style="color: #ffa07a;">"Insert an empty line above the current line. Position the cursor at it's beginning, according to the current mode."</span>
+  (<span style="color: #00ffff;">interactive</span>)
+  (move-beginning-of-line nil)
+  (newline-and-indent)
+  (forward-line -1)
+  (indent-according-to-mode))
+
+(global-set-key (kbd <span style="color: #ffa07a;">"s-&lt;return&gt;"</span>) 'smart-open-line)
+(global-set-key (kbd <span style="color: #ffa07a;">"s-S-&lt;return&gt;"</span>) 'smart-open-line-above)
+</pre>
+</div>
+
+<p>
+Join lines.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #00ffff;">defun</span> <span style="color: #87cefa;">smart-join-line</span> (beg end)
+  <span style="color: #ffa07a;">"If in a region, join all the lines in it. If not, join the current line with the next line."</span>
+  (<span style="color: #00ffff;">interactive</span> <span style="color: #ffa07a;">"r"</span>)
+  (<span style="color: #00ffff;">if</span> mark-active
+      (join-region beg end)
+      (top-join-line)))
+
+(<span style="color: #00ffff;">defun</span> <span style="color: #87cefa;">top-join-line</span> ()
+  <span style="color: #ffa07a;">"Join the current line with the next line."</span>
+  (<span style="color: #00ffff;">interactive</span>)
+  (delete-indentation 1))
+
+(<span style="color: #00ffff;">defun</span> <span style="color: #87cefa;">join-region</span> (beg end)
+  <span style="color: #ffa07a;">"Join all the lines in the region."</span>
+  (<span style="color: #00ffff;">interactive</span> <span style="color: #ffa07a;">"r"</span>)
+  (<span style="color: #00ffff;">if</span> mark-active
+      (<span style="color: #00ffff;">let</span> ((beg (region-beginning))
+            (end (copy-marker (region-end))))
+        (goto-char beg)
+        (<span style="color: #00ffff;">while</span> (&lt; (point) end)
+          (join-line 1)))))
+
+(global-set-key (kbd <span style="color: #ffa07a;">"s-j"</span>) 'smart-join-line)
+</pre>
+</div>
+
+<p>
+Delete trailing spaces and add new line in the end of a file on save.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(add-hook 'before-save-hook 'delete-trailing-whitespace)
+(<span style="color: #00ffff;">setq</span> require-final-newline t)
+</pre>
+</div>
+
+<p>
+Allow shift selecting in org mode (I don't care about priority indicators).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
+</pre>
+</div>
+
+<p>
+Multiple cursors are a must. Make <code>&lt;return&gt;</code> insert a newline; <code>multiple-cursors-mode</code> can still be disabled with <code>C-g</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #00ffff;">use-package</span> <span style="color: #7fffd4;">multiple-cursors</span>
+  <span style="color: #b0c4de;">:config</span>
+  (<span style="color: #00ffff;">setq</span> mc/always-run-for-all 1)
+  (global-set-key (kbd <span style="color: #ffa07a;">"s-d"</span>) 'mc/mark-next-like-this)
+  (global-set-key (kbd <span style="color: #ffa07a;">"C-s-g"</span>) 'mc/mark-all-dwim)
+  (define-key mc/keymap (kbd <span style="color: #ffa07a;">"&lt;return&gt;"</span>) nil)
+  (global-set-key (kbd <span style="color: #ffa07a;">"s-&lt;mouse-1&gt;"</span>) 'mc/add-cursor-on-click))
+</pre>
+</div>
+
+<p>
+Comment lines.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(global-set-key (kbd <span style="color: #ffa07a;">"s-/"</span>) 'comment-line)
+</pre>
+</div>
+
+<p>
+ESC as the universal "get me out of here" command.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(define-key key-translation-map (kbd <span style="color: #ffa07a;">"ESC"</span>) (kbd <span style="color: #ffa07a;">"C-g"</span>))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2843025" class="outline-3">
+<h3 id="org2843025"><span class="section-number-3">3.5</span> Windows</h3>
+<div class="outline-text-3" id="text-3-5">
+<p>
+Automatic new windows are always on the bottom, not the side.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #00ffff;">setq</span> split-height-threshold 0)
+(<span style="color: #00ffff;">setq</span> split-width-threshold nil)
+</pre>
+</div>
+
+<p>
+Move between windows with alt-tab
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(global-set-key (kbd <span style="color: #ffa07a;">"M-&lt;tab&gt;"</span>) (kbd <span style="color: #ffa07a;">"C-x o"</span>))
+</pre>
+</div>
+
+<p>
+Shackle to make sure all windows are nicely positioned.
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #00ffff;">use-package</span> <span style="color: #7fffd4;">shackle</span>
+  <span style="color: #b0c4de;">:init</span>
+  (<span style="color: #00ffff;">setq</span> shackle-default-alignment 'below
+        shackle-default-size 0.4
+        shackle-rules '((help-mode           <span style="color: #b0c4de;">:align</span> below <span style="color: #b0c4de;">:select</span> t)
+                        (helpful-mode        <span style="color: #b0c4de;">:align</span> below)
+                        (compilation-mode    <span style="color: #b0c4de;">:select</span> t   <span style="color: #b0c4de;">:size</span> 0.25)
+                        (<span style="color: #ffa07a;">"*compilation*"</span>     <span style="color: #b0c4de;">:select</span> nil <span style="color: #b0c4de;">:size</span> 0.25)
+                        (<span style="color: #ffa07a;">"*ag search*"</span>       <span style="color: #b0c4de;">:select</span> nil <span style="color: #b0c4de;">:size</span> 0.25)
+                        (<span style="color: #ffa07a;">"*Flycheck errors*"</span> <span style="color: #b0c4de;">:select</span> nil <span style="color: #b0c4de;">:size</span> 0.25)
+                        (<span style="color: #ffa07a;">"*Warnings*"</span>        <span style="color: #b0c4de;">:select</span> nil <span style="color: #b0c4de;">:size</span> 0.25)
+                        (<span style="color: #ffa07a;">"*Error*"</span>           <span style="color: #b0c4de;">:select</span> nil <span style="color: #b0c4de;">:size</span> 0.25)
+                        (<span style="color: #ffa07a;">"*Org Links*"</span>       <span style="color: #b0c4de;">:select</span> nil <span style="color: #b0c4de;">:size</span> 0.1)
+                        (magit-status-mode                <span style="color: #b0c4de;">:align</span> bottom <span style="color: #b0c4de;">:size</span> 0.5  <span style="color: #b0c4de;">:inhibit-window-quit</span> t)
+                        (magit-log-mode                   <span style="color: #b0c4de;">:same</span> t                  <span style="color: #b0c4de;">:inhibit-window-quit</span> t)
+                        (magit-commit-mode                <span style="color: #b0c4de;">:ignore</span> t)
+                        (magit-diff-mode     <span style="color: #b0c4de;">:select</span> nil  <span style="color: #b0c4de;">:align</span> left   <span style="color: #b0c4de;">:size</span> 0.5)
+                        (git-commit-mode                  <span style="color: #b0c4de;">:same</span> t)
+                        (vc-annotate-mode                 <span style="color: #b0c4de;">:same</span> t)
+                        ))
+  <span style="color: #b0c4de;">:config</span>
+  (shackle-mode 1))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga89ca1a" class="outline-3">
+<h3 id="orga89ca1a"><span class="section-number-3">3.6</span> Edit indirect</h3>
+<div class="outline-text-3" id="text-3-6">
+<p>
+Select any region and edit it in another buffer.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #00ffff;">use-package</span> <span style="color: #7fffd4;">edit-indirect</span>)
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org474e7b4" class="outline-3">
+<h3 id="org474e7b4"><span class="section-number-3">3.7</span> Ivy, Swiper and Counsel</h3>
+<div class="outline-text-3" id="text-3-7">
+<p>
+Swiper
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #00ffff;">use-package</span> <span style="color: #7fffd4;">swiper</span>
+  <span style="color: #b0c4de;">:config</span>
+  (global-set-key (kbd <span style="color: #ffa07a;">"s-f"</span>) 'swiper-isearch))
+</pre>
+</div>
+
+<p>
+Ivy
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
+(<span style="color: #00ffff;">use-package</span> <span style="color: #7fffd4;">ivy</span>
+  <span style="color: #b0c4de;">:config</span>
+  (ivy-mode 1)
+  (<span style="color: #00ffff;">setq</span> ivy-use-virtual-buffers t)
+  (<span style="color: #00ffff;">setq</span> ivy-count-format <span style="color: #ffa07a;">"(%d/%d) "</span>)
+  (<span style="color: #00ffff;">setq</span> enable-recursive-minibuffers t)
+  (<span style="color: #00ffff;">setq</span> ivy-initial-inputs-alist nil)
+  (<span style="color: #00ffff;">setq</span> ivy-re-builders-alist
+      '((swiper . ivy--regex-plus)
+        (swiper-isearch . regexp-quote)
+        <span style="color: #ff7f24;">;; </span><span style="color: #ff7f24;">(counsel-git . ivy--regex-plus)</span>
+        <span style="color: #ff7f24;">;; </span><span style="color: #ff7f24;">(counsel-ag . ivy--regex-plus)</span>
+        (counsel-rg . ivy--regex-plus)
+        (t      . ivy--regex-fuzzy)))   <span style="color: #ff7f24;">;; </span><span style="color: #ff7f24;">enable fuzzy searching everywhere except for Swiper and ag</span>
+
+  (global-set-key (kbd <span style="color: #ffa07a;">"s-b"</span>) 'ivy-switch-buffer))
+
+
+(<span style="color: #00ffff;">use-package</span> <span style="color: #7fffd4;">ivy-rich</span>
+  <span style="color: #b0c4de;">:config</span>
+  (ivy-rich-mode 1)
+  (<span style="color: #00ffff;">setq</span> ivy-rich-path-style 'abbrev))
+
+</pre>
+</div>
+
+<p>
+Counsel
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
+(<span style="color: #00ffff;">use-package</span> <span style="color: #7fffd4;">counsel</span>
+  <span style="color: #b0c4de;">:config</span>
+  (global-set-key (kbd <span style="color: #ffa07a;">"M-x"</span>) 'counsel-M-x)
+  (global-set-key (kbd <span style="color: #ffa07a;">"s-y"</span>) 'counsel-yank-pop)
+  (global-set-key (kbd <span style="color: #ffa07a;">"C-x C-f"</span>) 'counsel-find-file)
+  (global-set-key (kbd <span style="color: #ffa07a;">"s-F"</span>) 'counsel-rg)
+  (global-set-key (kbd <span style="color: #ffa07a;">"s-p"</span>) 'counsel-git))
+
+<span style="color: #ff7f24;">;; </span><span style="color: #ff7f24;">When using git ls (via counsel-git), include unstaged files</span>
+(<span style="color: #00ffff;">setq</span> counsel-git-cmd <span style="color: #ffa07a;">"git ls-files -z --full-name --exclude-standard --others --cached --"</span>)
+
+(<span style="color: #00ffff;">use-package</span> <span style="color: #7fffd4;">smex</span>)
+(<span style="color: #00ffff;">use-package</span> <span style="color: #7fffd4;">flx</span>)
+
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org73b5298" class="outline-2">
+<h2 id="org73b5298"><span class="section-number-2">4</span> Git</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+Magit time
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
+  (<span style="color: #00ffff;">use-package</span> <span style="color: #7fffd4;">magit</span>
+    <span style="color: #b0c4de;">:config</span>
+    (global-set-key (kbd <span style="color: #ffa07a;">"s-g"</span>) 'magit-status))
+  (<span style="color: #00ffff;">use-package</span> <span style="color: #7fffd4;">magit-todos</span>)
+
+  (<span style="color: #00ffff;">use-package</span> <span style="color: #7fffd4;">hl-todo</span>
+    <span style="color: #b0c4de;">:config</span>
+    (<span style="color: #00ffff;">setq</span> hl-todo-keyword-faces
+        '((<span style="color: #ffa07a;">"TODO"</span>   . <span style="color: #ffa07a;">"#FF0000"</span>)
+          (<span style="color: #ffa07a;">"FIXME"</span>  . <span style="color: #ffa07a;">"#FF0000"</span>)
+          (<span style="color: #ffa07a;">"DEBUG"</span>  . <span style="color: #ffa07a;">"#A020F0"</span>)
+          (<span style="color: #ffa07a;">"GOTCHA"</span> . <span style="color: #ffa07a;">"#FF4500"</span>)
+          (<span style="color: #ffa07a;">"STUB"</span>   . <span style="color: #ffa07a;">"#1E90FF"</span>))))
+</pre>
+</div>
+
+<p>
+Navigate to projects with <code>Cmd+Shift+P</code>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
+(<span style="color: #00ffff;">setq</span> magit-repository-directories '((<span style="color: #ffa07a;">"</span><span style="color: #ffc0cb; font-weight: bold;">\</span><span style="color: #ffa07a;">~/Projects/"</span> . 4)))
+
+(<span style="color: #00ffff;">defun</span> <span style="color: #87cefa;">magit-status-with-prefix-arg</span> ()
+  <span style="color: #ffa07a;">"Call `magit-status` with a prefix."</span>
+  (<span style="color: #00ffff;">interactive</span>)
+  (<span style="color: #00ffff;">let</span> ((current-prefix-arg '(4)))
+    (call-interactively #'magit-status)))
+
+(global-set-key (kbd <span style="color: #ffa07a;">"s-P"</span>) 'magit-status-with-prefix-arg)
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2af165b" class="outline-2">
+<h2 id="org2af165b"><span class="section-number-2">5</span> Spell checking</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+Spell checking requires an external command to be available. Install aspell on your Mac, then make it the default checker for Emacs’ ispell. Note that personal dictionary is located at ~/.aspell.LANG.pws by default.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
+(<span style="color: #00ffff;">setq</span> ispell-program-name <span style="color: #ffa07a;">"aspell"</span>)
+
+</pre>
+</div>
+
+<p>
+Enable spellcehck for all text modes. TODO: disable on start.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
+(add-hook 'text-mode-hook 'flyspell-mode)
+(global-set-key (kbd <span style="color: #ffa07a;">"s-\\"</span>) 'ispell-word)
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga4bf233" class="outline-2">
+<h2 id="orga4bf233"><span class="section-number-2">6</span> Thesaurus</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+Synonym search is <code>Cmd+Shift+\</code>. It requires <code>wordnet</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #00ffff;">use-package</span> <span style="color: #7fffd4;">powerthesaurus</span>
+  <span style="color: #b0c4de;">:config</span>
+  (global-set-key (kbd <span style="color: #ffa07a;">"s-|"</span>) 'powerthesaurus-lookup-word-dwim)
+  )
+</pre>
+</div>
+
+<p>
+Word definition search.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
+(<span style="color: #00ffff;">use-package</span> <span style="color: #7fffd4;">define-word</span>
+  <span style="color: #b0c4de;">:config</span>
+  (global-set-key (kbd <span style="color: #ffa07a;">"M-\\"</span>) 'define-word-at-point))
+
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
+  <span style="color: #ff7f24;">;; </span><span style="color: #ff7f24;">(read-abbrev-file abbrev-file-name t)</span>
+  <span style="color: #ff7f24;">;; </span><span style="color: #ff7f24;">(setq-default abbrev-mode t)</span>
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd32dc50" class="outline-2">
+<h2 id="orgd32dc50"><span class="section-number-2">7</span> YASnippet</h2>
+<div class="outline-text-2" id="text-7">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
+  (<span style="color: #00ffff;">use-package</span> <span style="color: #7fffd4;">yasnippet</span>
+    <span style="color: #b0c4de;">:config</span>
+    (<span style="color: #00ffff;">setq</span> yas-snippet-dirs
+          '(<span style="color: #ffa07a;">"~/.emacs.d/snippets"</span>))
+    (yas-global-mode 1))
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org7d4120a" class="outline-2">
+<h2 id="org7d4120a"><span class="section-number-2">8</span> Markdown</h2>
+<div class="outline-text-2" id="text-8">
+<p>
+Let's see what this does&#x2026;
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
+  (<span style="color: #00ffff;">use-package</span> <span style="color: #7fffd4;">markdown-mode</span>
+    <span style="color: #b0c4de;">:mode</span> ((<span style="color: #ffa07a;">"README\\.md\\'"</span> . gfm-mode)
+           (<span style="color: #ffa07a;">"\\.md\\'"</span> . markdown-mode)
+           (<span style="color: #ffa07a;">"\\.markdown\\'"</span> . markdown-mode))
+    <span style="color: #b0c4de;">:init</span> (<span style="color: #00ffff;">setq</span> markdown-command <span style="color: #ffa07a;">"pandoc --no-highlight"</span>))
+
+  (eval-after-load 'markdown-mode
+    `(define-key markdown-mode-map (kbd <span style="color: #ffa07a;">"C-s-&lt;down&gt;"</span>) 'markdown-narrow-to-subtree))
+
+  (eval-after-load 'markdown-mode
+    `(define-key markdown-mode-map (kbd <span style="color: #ffa07a;">"C-s-&lt;up&gt;"</span>) 'widen))
+
+  (eval-after-load 'markdown-mode
+    `(define-key markdown-mode-map (kbd <span style="color: #ffa07a;">"s-O"</span>) (<span style="color: #00ffff;">lambda</span> ()
+                                                 (<span style="color: #00ffff;">interactive</span>)
+                                                 (markdown-kill-ring-save)
+                                                 (<span style="color: #00ffff;">let</span> ((oldbuf (current-buffer)))
+                                                   (<span style="color: #00ffff;">save-current-buffer</span>
+                                                     (set-buffer <span style="color: #ffa07a;">"*markdown-output*"</span>)
+                                                     (with-no-warnings (mark-whole-buffer))
+                                                     (simpleclip-copy (point-min) (point-max)))))))
+
+  <span style="color: #ff7f24;">;; </span><span style="color: #ff7f24;">Export without the first line (usually there's a header)</span>
+  (eval-after-load 'markdown-mode
+    `(define-key markdown-mode-map (kbd <span style="color: #ffa07a;">"M-s-O"</span>) (<span style="color: #00ffff;">lambda</span> ()
+                                                 (<span style="color: #00ffff;">interactive</span>)
+                                                 (markdown-kill-ring-save)
+                                                 (<span style="color: #00ffff;">let</span> ((oldbuf (current-buffer)))
+                                                   (<span style="color: #00ffff;">save-current-buffer</span>
+                                                     (set-buffer <span style="color: #ffa07a;">"*markdown-output*"</span>)
+                                                     (goto-char (point-min))
+                                                     (kill-whole-line)
+                                                     (with-no-warnings (mark-whole-buffer))
+                                                     (simpleclip-copy (point-min) (point-max)))))))
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orge9d922e" class="outline-2">
+<h2 id="orge9d922e"><span class="section-number-2">9</span> Programming</h2>
+<div class="outline-text-2" id="text-9">
+</div>
+<div id="outline-container-orgf28f8fd" class="outline-3">
+<h3 id="orgf28f8fd"><span class="section-number-3">9.1</span> Formatting</h3>
+<div class="outline-text-3" id="text-9-1">
+<p>
+Format everything
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">  (<span style="color: #00ffff;">use-package</span> <span style="color: #7fffd4;">format-all</span>)
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4e23b49" class="outline-2">
+<h2 id="org4e23b49"><span class="section-number-2">10</span> Frames, windows, buffers</h2>
+<div class="outline-text-2" id="text-10">
+<p>
+Always open in the same frame
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">  (<span style="color: #00ffff;">setq</span> ns-pop-up-frames nil)
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org98a3b33" class="outline-2">
+<h2 id="org98a3b33"><span class="section-number-2">11</span> Org</h2>
+<div class="outline-text-2" id="text-11">
+<p>
+Visually indent sections, which looks better for smaller files etc.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #00ffff;">setq</span> org-startup-indented t)
+(<span style="color: #00ffff;">setq</span> org-catch-invisible-edits 'error)
+(<span style="color: #00ffff;">setq</span> org-cycle-separator-lines -1)
+(<span style="color: #00ffff;">setq</span> calendar-week-start-day 1)
+(<span style="color: #00ffff;">setq</span> org-ellipsis <span style="color: #ffa07a;">"&#10549;"</span>)
+(<span style="color: #00ffff;">setq</span> org-support-shift-select t)
+</pre>
+</div>
+
+<p>
+org files
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #00ffff;">setq</span> org-directory <span style="color: #ffa07a;">"~/org"</span>)
+(<span style="color: #00ffff;">setq</span> org-agenda-files '(<span style="color: #ffa07a;">"~/org"</span>))
+
+(<span style="color: #00ffff;">setq</span> org-refile-targets (<span style="color: #00ffff;">quote</span> ((nil <span style="color: #b0c4de;">:maxlevel</span> . 9)
+                                 (org-agenda-files <span style="color: #b0c4de;">:maxlevel</span> . 9))))
+</pre>
+</div>
+
+<p>
+Code block indentation should be correct depending on language, including code highlighting.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
+(<span style="color: #00ffff;">setq</span> org-src-tab-acts-natively t)
+(<span style="color: #00ffff;">setq</span> org-src-preserve-indentation t)
+(<span style="color: #00ffff;">setq</span> org-src-fontify-natively t)
+
+</pre>
+</div>
+
+<p>
+Export to HTML
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #00ffff;">use-package</span> <span style="color: #7fffd4;">htmlize</span>)
+(<span style="color: #00ffff;">with-eval-after-load</span> 'org
+  (define-key org-mode-map (kbd <span style="color: #ffa07a;">"s-e"</span>) (kbd <span style="color: #ffa07a;">"C-c C-e h h"</span>)))
+
+</pre>
+</div>
+
+<p>
+Etc from <a href="https://github.com/freetonik/emacs-dotfiles/blob/master/init.org">https://github.com/freetonik/emacs-dotfiles/blob/master/init.org</a>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">  (<span style="color: #00ffff;">with-eval-after-load</span> 'org
+    <span style="color: #ff7f24;">;; </span><span style="color: #ff7f24;">no shift or alt with arrows</span>
+    (define-key org-mode-map (kbd <span style="color: #ffa07a;">"&lt;S-left&gt;"</span>) nil)
+    (define-key org-mode-map (kbd <span style="color: #ffa07a;">"&lt;S-right&gt;"</span>) nil)
+    (define-key org-mode-map (kbd <span style="color: #ffa07a;">"&lt;M-left&gt;"</span>) nil)
+    (define-key org-mode-map (kbd <span style="color: #ffa07a;">"&lt;M-right&gt;"</span>) nil)
+    <span style="color: #ff7f24;">;; </span><span style="color: #ff7f24;">no shift-alt with arrows</span>
+    (define-key org-mode-map (kbd <span style="color: #ffa07a;">"&lt;M-S-left&gt;"</span>) nil)
+    (define-key org-mode-map (kbd <span style="color: #ffa07a;">"&lt;M-S-right&gt;"</span>) nil)
+
+    (define-key org-mode-map (kbd <span style="color: #ffa07a;">"C-s-&lt;left&gt;"</span>) 'org-metaleft)
+    (define-key org-mode-map (kbd <span style="color: #ffa07a;">"C-s-&lt;right&gt;"</span>) 'org-metaright))
+
+  (<span style="color: #00ffff;">setq</span> org-use-speed-commands t)
+
+  (<span style="color: #00ffff;">with-eval-after-load</span> 'org
+    (define-key org-mode-map (kbd <span style="color: #ffa07a;">"C-s-&lt;down&gt;"</span>) 'org-narrow-to-subtree)
+    (define-key org-mode-map (kbd <span style="color: #ffa07a;">"C-s-&lt;up&gt;"</span>) 'widen))
+</pre>
+</div>
+
+<p>
+Agenda and capture
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(global-set-key (kbd <span style="color: #ffa07a;">"C-c c"</span>) 'org-capture)
+(global-set-key (kbd <span style="color: #ffa07a;">"s-="</span>) 'org-capture)
+(global-set-key <span style="color: #ffa07a;">"\C-ca"</span> 'org-agenda)
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: harritaylor</p>
+<p class="date">Created: 2020-03-08 Sun 22:55</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
