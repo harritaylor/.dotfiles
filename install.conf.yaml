@@ -11,6 +11,8 @@
         create: true
     ~/.tmux.conf: tmux.conf
     ~/.vimrc: vimrc
+    ~/.vim/swaps:
+            create: true
     ~/.zprofile: zprofile
     ~/.zshrc: zshrc
     ~/.zshenv: aliases
