@@ -5,6 +5,9 @@
 #+STARTUP: overview
 #+PROPERTY: header-args :tangle yes
 
+Based off the wonderful [[https://bitbucket.org/mituharu/emacs-mac/src/master/README-mac][Emacs Mac Port]], these are my dotfiles.
+Keep in mind: shift and pinch set full screen / not fullscreen, pinch sets font size, and side swiping switches between buffers.
+
 * Meta
 ** Startup timer / Garbage collection
 
@@ -100,7 +103,8 @@ Tangle and compile this file on save automatically:
 Focus colour. Use C-x C-e on (list-colors-display) to get a choice!
 #+begin_src emacs-lisp :tangle yes
 (set-face-attribute 'mode-line nil :background "Plum")
-(set-face-attribute 'mode-line-inactive nil :background "Snow")
+(set-face-attribute 'mode-line-inactive nil :background "Snow" :foreground "Black")
+;; (set-face-attribute 'mode
 ;; (set-face-attribute 'hl-line-face "LemonChiffon")
 #+end_src
 
@@ -212,6 +216,8 @@ Basic things.
 (global-unset-key (kbd "s-p"))
 (global-unset-key (kbd "<ctrl>-<tab>"))
 #+END_SRC
+
+#+RESULTS:
 
 Emacs kill ring and system clipboard should be independent.
 #+BEGIN_SRC emacs-lisp
@@ -531,7 +537,8 @@ Ivy
         (t      . ivy--regex-fuzzy)))   ;; enable fuzzy searching everywhere except for Swiper and ag
 
   (global-set-key (kbd "s-b") 'ivy-switch-buffer)
-  (global-set-key (kbd "s-F") 'ivy-resume))
+  ;; (global-set-key (kbd "s-F") 'ivy-resume)
+)
 
 
 (use-package ivy-rich
