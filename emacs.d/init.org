@@ -70,7 +70,7 @@ Install use-package.
 
 Emacs control is Ctrl. Emacs Super is Command. Emacs Meta is Alt. Right Alt (option) can be used to enter symbols like em dashes =—=.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle yes
 (setq mac-right-command-modifier 'super)
 (setq mac-command-modifier 'super)
 
@@ -81,36 +81,35 @@ Emacs control is Ctrl. Emacs Super is Command. Emacs Meta is Alt. Right Alt (opt
 (setq mac-right-option-modifier 'nil)
 #+END_SRC
 ** After save hook
+
 Tangle and compile this file on save automatically:
 #+begin_src emacs-lisp :tangle yes
-(defun tangle-init ()
-  "If the current buffer is 'init.org' the code-blocks are
-tangled, and the tangled file is compiled."
-  (when (equal (buffer-file-name)
-               (expand-file-name (concat user-emacs-directory "init.org")))
-    ;; Avoid running hooks when tangling.
-    (let ((prog-mode-hook nil))
-      (org-babel-tangle)
-      (byte-compile-file (concat user-emacs-directory "init.el")))))
-
-(add-hook 'after-save-hook 'tangle-init)
+(defun my/tangle-init ()
+  "If the current file is in '~/.dotfiles', the code blocks are tangled"
+  (when (equal buffer-file-name (file-truename (concat user-emacs-directory "init.org")))
+    ;; load tangled init.el file and byte-compile it
+    (org-babel-tangle)
+    (load-file (concat user-emacs-directory "init.el"))
+    (byte-compile-file (concat user-emacs-directory "init.el"))
+    (message "compiled %s" buffer-file-name)))
+(add-hook 'after-save-hook #'my/tangle-init)
 #+end_src
-
 * Visuals
 ** Aesthetics
 
-Focus colour
+Focus colour. Use C-x C-e on (list-colors-display) to get a choice!
 #+begin_src emacs-lisp :tangle yes
-;; (set-face-attribute 'mode-line nil :background "NavajoWhite")
-;; (set-face-attribute 'mode-line-inactive nil :background "#FAFAFA")
+(set-face-attribute 'mode-line nil :background "Plum")
+(set-face-attribute 'mode-line-inactive nil :background "Snow")
+;; (set-face-attribute 'hl-line-face "LemonChiffon")
 #+end_src
 
-Show full path in title bar.
+Show full path in title bar & set initial frame size
 #+BEGIN_SRC emacs-lisp
 (setq-default line-spacing 0)
-(setq initial-frame-alist '((width . 135) (height . 55)))
+;; (setq initial-frame-alist '((width . 135) (height . 55)))
 (tool-bar-mode -1)
-(setq-default frame-title-format "%b (%f)")
+(setq-default frame-title-format "%b — Emacs")
 #+END_SRC
 
 Simple mode line.
@@ -177,19 +176,6 @@ Vi-tilde fringes
 #+end_src
 * Sane defaults
 ** Basics
-
-Smooooother scrolling
-#+begin_src emacs-lisp :tangle yes
-;; (setq scroll-margin 10
-;;    scroll-step 1
-;;    next-line-add-newlines nil
-;;    scroll-conservatively 10000
-;;    scroll-preserve-screen-position 1)
-
-;; (setq mouse-wheel-follow-mouse 't)
-;; (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
-#+end_src
-
 Autosave and backup are not useful.
 #+BEGIN_SRC emacs-lisp
 (setq make-backup-files nil) ; stop creating backup~ files
@@ -224,6 +210,7 @@ Basic things.
 (scroll-bar-mode -1)
 (delete-selection-mode 1)
 (global-unset-key (kbd "s-p"))
+(global-unset-key (kbd "<ctrl>-<tab>"))
 #+END_SRC
 
 Emacs kill ring and system clipboard should be independent.
@@ -239,7 +226,6 @@ Quickly switch to scratch buffer with =Cmd+0=.
                               (interactive)
                               (if (string= (buffer-name) "*scratch*") (previous-buffer) (switch-to-buffer "*scratch*"))))
 #+END_SRC
-
 ** Which key
 
 #+BEGIN_SRC emacs-lisp
@@ -249,7 +235,6 @@ Quickly switch to scratch buffer with =Cmd+0=.
   (setq which-key-idle-delay 0.5))
 #+END_SRC
 * OS Integration
-
 Pass system shell environment to Emacs. This is important primarily for shell inside Emacs, but also things like Org mode export to Tex PDF don't work, since it relies on running external command =pdflatex=, which is loaded from =PATH=.
 #+BEGIN_SRC emacs-lisp
 (use-package exec-path-from-shell
@@ -354,8 +339,8 @@ Regular people undo-redo.
 Move between open buffers with ease.
 
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "s-[") 'previous-buffer)
-(global-set-key (kbd "s-]") 'next-buffer)
+(global-set-key (kbd "s-{") 'previous-buffer)
+(global-set-key (kbd "s-}") 'next-buffer)
 #+END_SRC
 
 #+RESULTS:
@@ -489,7 +474,6 @@ Automatic new windows are always on the bottom, not the side.
 #+END_SRC
 
 Move between windows with alt-tab
-
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "M-<tab>") (kbd "C-x o"))
 #+END_SRC
@@ -547,7 +531,7 @@ Ivy
         (t      . ivy--regex-fuzzy)))   ;; enable fuzzy searching everywhere except for Swiper and ag
 
   (global-set-key (kbd "s-b") 'ivy-switch-buffer)
-  (global-set-key (kbd "M-s-b") 'ivy-resume))
+  (global-set-key (kbd "s-F") 'ivy-resume))
 
 
 (use-package ivy-rich
@@ -581,20 +565,29 @@ Counsel
 Magit time
 #+BEGIN_SRC emacs-lisp
 
-  (use-package magit
-    :config
-    (global-set-key (kbd "s-g") 'magit-status))
-  (use-package magit-todos)
+(use-package magit
+  :config
+  (global-set-key (kbd "s-g") 'magit-status)
+  (global-set-key (kbd "s-t") 'magit-todos-list))
 
-  (use-package hl-todo
-    :config
-    (setq hl-todo-keyword-faces
+(use-package magit-todos
+  :commands (magit-todos-mode)
+  :config
+  (setq magit-todos-recursive t))
+
+(use-package hl-todo
+  :config
+  (setq hl-todo-keyword-faces
         '(("TODO"   . "#FF0000")
           ("FIXME"  . "#FF0000")
           ("DEBUG"  . "#A020F0")
           ("GOTCHA" . "#FF4500")
-          ("STUB"   . "#1E90FF"))))
+          ("STUB"   . "#1E90FF")))
+  (add-hook 'prog-mode-hook 'hl-todo-mode))
 #+END_SRC
+
+#+RESULTS:
+: t
 
 Navigate to projects with =Cmd+Shift+P=
 #+BEGIN_SRC emacs-lisp
@@ -676,7 +669,7 @@ Format everything
 (use-package format-all
   :config
   (add-hook 'prog-mode-hook 'format-all-mode)
-  (global-set-key (kbd "M-S-l") 'format-all-buffer))
+  (global-set-key (kbd "M-s-l") 'format-all-buffer))
 #+end_src
 ** Completions
 #+begin_src emacs-lisp :tangle yes

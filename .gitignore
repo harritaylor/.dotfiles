@@ -8,3 +8,4 @@ emacs.d/custom.el
 /emacs.d/request/
 /emacs.d/url/
 /emacs.d/init-template.el
+/emacs.d/tramp
