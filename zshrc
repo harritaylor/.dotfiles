@@ -1,10 +1,13 @@
+# Fix for tramp https://blog.karssen.org/2016/03/02/fixing-emacs-tramp-mode-when-using-zsh/
+[[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
+
 # Add `~/bin` to `$PATH`
 export PATH=$HOME/bin:$PATH
 export PATH="/usr/local/sbin:$PATH"
 export PATH=$HOME/.emacs.d/bin:$PATH
 
 # Add path to fzf
-export FZF_BASE=/usr/local/bin/fzf
+# export FZF_BASE=/usr/local/bin/fzf
 
 # Path to oh-my-zsh & zsh settings
 export ZSH="$HOME/.oh-my-zsh"
