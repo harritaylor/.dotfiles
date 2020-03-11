@@ -9,3 +9,9 @@ emacs.d/custom.el
 /emacs.d/url/
 /emacs.d/init-template.el
 /emacs.d/tramp
+/emacs.d/eshell/
+/emacs.d/tmp/
+/emacs.d/.emacs.desktop.lock
+/emacs.d/anaconda-mode/
+/emacs.d/bookmarks
+/emacs.d/elpy/

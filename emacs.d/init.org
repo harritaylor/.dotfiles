@@ -3,14 +3,12 @@
 #+BABEL: :cache yes
 #+PROPERTY: header-args :tangle yes
 #+STARTUP: overview
-#+PROPERTY: header-args :tangle yes
 
 Based off the wonderful [[https://bitbucket.org/mituharu/emacs-mac/src/master/README-mac][Emacs Mac Port]], these are my dotfiles.
 Keep in mind: shift and pinch set full screen / not fullscreen, pinch sets font size, and side swiping switches between buffers.
 
 * Meta
 ** Startup timer / Garbage collection
-
 #+BEGIN_SRC emacs-lisp
 (add-hook 'emacs-startup-hook
           (lambda ()
@@ -97,89 +95,160 @@ Tangle and compile this file on save automatically:
     (message "compiled %s" buffer-file-name)))
 (add-hook 'after-save-hook #'my/tangle-init)
 #+end_src
-* Visuals
-** Aesthetics
-
-Focus colour. Use C-x C-e on (list-colors-display) to get a choice!
+* Sane defaults
+** Evil Mode
+It all starts here
 #+begin_src emacs-lisp :tangle yes
-(set-face-attribute 'mode-line nil :background "Plum")
-(set-face-attribute 'mode-line-inactive nil :background "Snow" :foreground "Black")
-;; (set-face-attribute 'mode
-;; (set-face-attribute 'hl-line-face "LemonChiffon")
-#+end_src
+(use-package evil
+  :preface
+  (setq evil-want-visual-char-semi-exclusive t
+        evil-ex-search-vim-style-regexp t
+        evil-ex-substitute-global t
+        evil-ex-visual-char-range t
+        ;; evil-mode-line-format 'nil
+        evil-symbol-word-search t
+        evil-default-state 'emacs
+        evil-ex-interactive-search-highlight 'selected-window
+        evil-toggle-key "s--"
 
-Show full path in title bar & set initial frame size
-#+BEGIN_SRC emacs-lisp
-(setq-default line-spacing 0)
-;; (setq initial-frame-alist '((width . 135) (height . 55)))
-(tool-bar-mode -1)
-(setq-default frame-title-format "%b — Emacs")
-#+END_SRC
+        ;; cursor
+        evil-default-cursor '("Black" box)
+        evil-normal-state-cursor '("SpringGreen" box)
+        evil-emacs-state-cursor '("Plum" box)
+        evil-insert-state-cursor '("SpringGreen" bar)
+        evil-visual-state-cursor '("NavajoWhite" hollow)
 
-Simple mode line.
-#+BEGIN_SRC emacs-lisp
-(setq column-number-mode t) ;; show columns and rows in mode line
-#+END_SRC
+        ;; modeline
+        evil-normal-state-tag (propertize " NORMAL " 'face '(:background "SpringGreen"))
+        evil-emacs-state-tag (propertize " EMACS  " 'face '(:background "Plum"))
+        evil-insert-state-tag (propertize "-INSERT-" 'face '(:background "SpringGreen"))
+        evil-replace-state-tag  (propertize " REPLACE " 'face '(:background "SpringGreen"))
+        evil-motion-state-tag   (propertize "  MOTION " 'face '(:background "SpringGreen"))
+        evil-visual-state-tag   (propertize " VISUAL " 'face '(:background "NavajoWhite"))
+        evil-operator-state-tag (propertize " OPERATE " 'face '(:background "SpringGreen")))
 
-Font & pretty icons.
-#+begin_src emacs-lisp :tangle yes
-(when (member "Go Mono" (font-family-list))
-  (set-face-attribute 'default nil :font "Go Mono 14"))
-(setq-default line-spacing 1)
-(use-package all-the-icons)
-;; (use-package gruvbox-theme)
-;; (load-theme 'gruvbox-dark-soft)
-#+end_src
-
-Highlight current line.
-#+begin_src emacs-lisp :tangle yes
-(global-hl-line-mode 1)
-#+end_src
-
-Hide minor modes from modeline
-#+begin_src emacs-lisp :tangle yes
-(use-package rich-minority
   :config
-  (unless rich-minority-mode
-    (rich-minority-mode 1))
-  (setf rm-blacklist ""))
+  (evil-select-search-module 'evil-search-module 'evil-search)
+  (global-unset-key (kbd "C-u"))
+  (global-set-key (kbd "C-u") 'evil-scroll-page-up)
+
+  ;; (global-set-key (kbd "s--") 'evil-toggle-key)
+  ;; Enter a mode given a state
+  ;; http://wikemacs.org/wiki/Evil#Enter_an_emacs_mode_in_a_given_state
+  (loop for (mode . state) in '(
+                                (dired-mode . normal)
+                                (emacs-lisp-mode . normal)
+                                (org-mode . emacs))
+        do (evil-set-initial-state mode state))
+
+  ;; stop copying each visual state move to the clipboard
+  ;; https://bitbucket.org/lyro/evil/issue/336/osx-visual-state-copies-the-region-on
+  (advice-add #'evil-visual-update-x-selection :override #'ignore)
+
+  ;; Start help-with-tutorial in emacs state
+  (advice-add #'help-with-tutorial :after (lambda (&rest _) (evil-emacs-state +1)))
+
+  ;; Allows you to click buttons without initiating a selection
+  (define-key evil-motion-state-map [down-mouse-1] nil)
+
+  ;; TODO: https://github.com/hlissner/doom-emacs/blob/c2a0ac8b3e69fc362d222f108ddd3a01e46f1574/modules/editor/evil/config.el#L150
+  ;; (advice-add #'evil-force-normal-state :after #'escape) ;; this aint right...
+
+  ;; TODO: evil-easymotion
+  ;; https://github.com/hlissner/doom-emacs/blob/c2a0ac8b3e69fc362d222f108ddd3a01e46f1574/modules/editor/evil/config.el#L216
+
+  ;; TODO: evil-embrace
+  ;; https://github.com/hlissner/doom-emacs/blob/c2a0ac8b3e69fc362d222f108ddd3a01e46f1574/modules/editor/evil/config.el#L231
+
+  ;; TODO: evil-escape
+  ;; https://github.com/hlissner/doom-emacs/blob/c2a0ac8b3e69fc362d222f108ddd3a01e46f1574/modules/editor/evil/config.el#L277
+
+  :init
+  (evil-mode 1))
+#+end_src
+
+Evil leader shortcuts etc
+#+begin_src emacs-lisp :tangle yes
+;; (use-package evil-leader
+;;   :preface
+;;   (evil-leader/set-leader "SPC")
+;;   (evil-leader/set-key
+;;     "b" 'ibuffer
+;;     "k" 'kill-buffer))
+#+end_src
+
+** Basics
+
+Exec path from shell. TODO: not sure if useful?
+#+begin_src emacs-lisp :tangle yes
+(use-package exec-path-from-shell
+  :init
+  (exec-path-from-shell-copy-env "PATH"))
+#+end_src
+
+y-or-n-p is useful, but annoying sometimes
+#+begin_src emacs-lisp :tangle yes
+;; (defun y-or-n-p-with-return (orig-func &rest args)
+;;   (let ((query-replace-map (copy-keymap query-replace-map)))
+;;     (define-key query-replace-map (kbd "RET") 'act)
+;;     (apply orig-func args)))
+
+;; (advice-add 'y-or-n-p :around #'y-or-n-p-with-return)
 #+end_src
 
 #+RESULTS:
-: t
-** Functional
-Matching parenthesis appearance.
-#+BEGIN_SRC emacs-lisp
-(set-face-background 'show-paren-match "wheat")
-(set-face-attribute 'show-paren-match nil :weight 'extra-bold)
-(show-paren-mode)
-#+END_SRC
+: y-or-n-p-with-return
 
-Use spaces instead of tabs.
-#+BEGIN_SRC emacs-lisp
-(setq-default indent-tabs-mode nil)
-(setq-default c-basic-indent 2)
-(setq-default c-basic-offset 2)
-(setq-default tab-width 2)
-(setq tab-width 2)
-(setq js-indent-level 2)
-(setq css-indent-offset 2)
-(setq c-basic-offset 2)
-#+END_SRC
-
-Visual lines.
-#+BEGIN_SRC emacs-lisp
-(global-visual-line-mode t)
-#+END_SRC
-
-Vi-tilde fringes
+Session saving
 #+begin_src emacs-lisp :tangle yes
-(use-package vi-tilde-fringe
-  :config
-  (global-vi-tilde-fringe-mode 1))
+;; use only one desktop
+(setq desktop-path '("~/.emacs.d/"))
+(setq desktop-dirname "~/.emacs.d/")
+(setq desktop-base-file-name "emacs-desktop")
+(setq desktop-load-locked-desktop t)
+
+;; remove desktop after it's been read
+(add-hook 'desktop-after-read-hook
+          '(lambda ()
+             ;; desktop-remove clears desktop-dirname
+             (setq desktop-dirname-tmp desktop-dirname)
+             (desktop-remove)
+             (setq desktop-dirname desktop-dirname-tmp)))
+
+(defun saved-session ()
+  (file-exists-p (concat desktop-dirname "/" desktop-base-file-name)))
+
+;; use session-restore to restore the desktop manually
+(defun session-restore ()
+  "Restore a saved emacs session."
+  (interactive)
+  (if (saved-session)
+      (desktop-read)
+    (message "No session found.")))
+
+;; use session-save to save the desktop manually
+(defun session-save ()
+  "Save an emacs session."
+  (interactive)
+  (if (saved-session)
+      (if (y-or-n-p "Overwrite existing session? ")
+          (desktop-save-in-desktop-dir)
+        (message "Session not saved."))
+    (desktop-save-in-desktop-dir)))
+
+;; ask user whether to restore desktop at start-up
+(add-hook 'after-init-hook
+          '(lambda ()
+             (if (saved-session)
+                 (if (y-or-n-p "Restore session? ")
+                     (session-restore)))))
+
+(add-hook 'kill-emacs-hook
+          '(lambda ()
+             (if (y-or-n-p "Save session? ")
+                 (session-save) (desktop-remove))))
 #+end_src
-* Sane defaults
-** Basics
+
 Autosave and backup are not useful.
 #+BEGIN_SRC emacs-lisp
 (setq make-backup-files nil) ; stop creating backup~ files
@@ -205,6 +274,7 @@ Basic things.
  cursor-in-non-selected-windows t  ; Hide the cursor in inactive windows
  echo-keystrokes 0.1               ; Show keystrokes right away, don't show the message in the scratch buffer
  initial-scratch-message nil       ; Empty scratch buffer
+ initial-major-mode 'fundamental-mode
  sentence-end-double-space nil     ; Sentences should end in one space, come on!
  ;; confirm-kill-emacs 'y-or-n-p      ; y and n instead of yes and no when quitting
 )
@@ -240,6 +310,99 @@ Quickly switch to scratch buffer with =Cmd+0=.
   (which-key-mode)
   (setq which-key-idle-delay 0.5))
 #+END_SRC
+* Visuals
+** Aesthetics
+
+Focus colour. Use C-x C-e on (list-colors-display) to get a choice!
+#+begin_src emacs-lisp :tangle yes
+(set-face-attribute 'mode-line nil :background "Plum")
+(set-face-attribute 'mode-line-inactive nil :background "Snow" :foreground "Black")
+#+end_src
+
+Show full path in title bar & set initial frame size
+#+BEGIN_SRC emacs-lisp
+(setq-default line-spacing 0)
+;; (setq initial-frame-alist '((width . 135) (height . 55)))
+(tool-bar-mode -1)
+(setq-default frame-title-format "%b — Emacs")
+#+END_SRC
+
+Simple mode line.
+#+BEGIN_SRC emacs-lisp
+(setq column-number-mode t) ;; show columns and rows in mode line
+#+END_SRC
+
+Font & pretty icons.
+#+begin_src emacs-lisp :tangle yes
+(when (member "Go Mono" (font-family-list))
+  (set-face-attribute 'default nil :font "Go Mono 14"))
+(setq-default line-spacing 1)
+(use-package all-the-icons)
+;; (use-package gruvbox-theme)
+;; (load-theme 'gruvbox-dark-soft)
+#+end_src
+
+Hide minor modes from modeline
+#+begin_src emacs-lisp :tangle yes
+(use-package rich-minority
+  :config
+  (unless rich-minority-mode
+    (rich-minority-mode 1))
+  (setf rm-blacklist ""))
+#+end_src
+
+#+RESULTS:
+: t
+** Functional
+
+Evil-mode colourings
+#+begin_src emacs-lisp :tangle yes
+;; (setq evil-default-cursor (quote (t "#750000"))
+;;       evil-visual-state-cursor '("green" hollow)
+;;       evil-normal-state-cursor '("green" box)
+
+;;       evil-insert-state-cursor '("pink" (bar . 2)))
+#+end_src
+
+
+Matching parenthesis appearance.
+#+BEGIN_SRC emacs-lisp
+(use-package rainbow-delimiters
+  :config
+  (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
+;; (set-face-background 'show-paren-match "wheat")
+;; (set-face-attribute 'show-paren-match nil :weight 'extra-bold)
+;; (show-paren-mode)
+#+END_SRC
+
+Use spaces instead of tabs.
+#+BEGIN_SRC emacs-lisp
+(setq-default indent-tabs-mode nil)
+(setq-default c-basic-indent 2)
+(setq-default c-basic-offset 2)
+(setq-default tab-width 2)
+(setq tab-width 2)
+(setq js-indent-level 2)
+(setq css-indent-offset 2)
+(setq c-basic-offset 2)
+#+END_SRC
+
+Visual lines.
+#+BEGIN_SRC emacs-lisp
+;; (global-visual-line-mode t)
+;; (global-linum-mode t)
+;; (setq linum-format "%4d \u2502 ")
+#+END_SRC
+
+#+RESULTS:
+: %4d │
+
+Vi-tilde fringes
+#+begin_src emacs-lisp :tangle yes
+(use-package vi-tilde-fringe
+  :config
+  (global-vi-tilde-fringe-mode 1))
+#+end_src
 * OS Integration
 Pass system shell environment to Emacs. This is important primarily for shell inside Emacs, but also things like Org mode export to Tex PDF don't work, since it relies on running external command =pdflatex=, which is loaded from =PATH=.
 #+BEGIN_SRC emacs-lisp
@@ -330,20 +493,29 @@ point reaches the beginning or end of the buffer, stop there."
 (global-set-key (kbd "s-<left>") 'smarter-move-beginning-of-line)
 #+end_src
 
-#+RESULTS:
-: smarter-move-beginning-of-line
-
 Regular people undo-redo.
 #+BEGIN_SRC emacs-lisp
-(use-package undo-fu)
+;; (use-package undo-fu)
 (global-unset-key (kbd "C-z"))
-(global-set-key (kbd "s-z")   'undo-fu-only-undo)
-(global-set-key (kbd "s-r")   'undo-fu-only-redo)
+;; (global-set-key (kbd "s-z")   'undo-fu-only-undo)
+;; (global-set-key (kbd "s-r")   'undo-fu-only-redo)
+
+(use-package undo-tree
+  :diminish undo-tree-mode
+  :init
+  (progn
+    (global-undo-tree-mode)
+    (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/tmp/undo"))
+          undo-tree-auto-save-history t
+          undo-tree-visualizer-timestamps t
+          undo-tree-visualizer-diff t)))
+
+(global-set-key (kbd "s-z") 'undo-tree-undo)
+(global-set-key (kbd "s-Z") 'undo-tree-redo)
 #+END_SRC
 
 
 Move between open buffers with ease.
-
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "s-{") 'previous-buffer)
 (global-set-key (kbd "s-}") 'next-buffer)
@@ -591,6 +763,7 @@ Magit time
           ("GOTCHA" . "#FF4500")
           ("STUB"   . "#1E90FF")))
   (add-hook 'prog-mode-hook 'hl-todo-mode))
+
 #+END_SRC
 
 #+RESULTS:
@@ -599,7 +772,7 @@ Magit time
 Navigate to projects with =Cmd+Shift+P=
 #+BEGIN_SRC emacs-lisp
 
-(setq magit-repository-directories '(("\~/Projects/" . 4) ("\~/" . 1)))
+(setq magit-repository-directories '(("\~/Projects/" . 4)))
 
 (defun magit-status-with-prefix-arg ()
   "Call `magit-status` with a prefix."
@@ -695,6 +868,40 @@ Format everything
           '("~/.emacs.d/snippets"))
     (yas-global-mode 1))
 #+END_SRC
+** Language server protocol
+M-x Eglot
+Check this out: https://github.com/joaotavora/eglot#per-project-server-configuration
+#+begin_src emacs-lisp :tangle yes
+(use-package eglot
+  :config
+  ;; (add-to-list 'eglot-server-programs '(python-mode . ("python-langauge-server" "--args")))
+  (add-hook 'python-mode-hook 'eglot-ensure)
+  (define-key eglot-mode-map (kbd "C-c h") 'eglot-help-at-point)
+  (define-key eglot-mode-map (kbd "<f6>") 'xref-find-definitions))
+#+end_src
+** Python
+
+Try again...
+
+Conda mode
+#+begin_src emacs-lisp :tangle yes
+
+#+end_src
+
+
+PyEnv mode. Allows for activating arbitrary venvs.
+#+begin_src emacs-lisp :tangle yes
+;; (use-package pyenv-mode)
+;; (use-package anaconda-mode)
+;; (use-package elpy
+;;   :preface
+;;   (setq python-shell-interpreter "ipython"
+;;         python-shell-interpreter-args "-i --simple-prompt")
+;;   :config
+;;   (add-hook 'python-mode-hook 'anaconda-mode)
+;;   (add-hook 'python-mode-hook 'anaconda-eldoc-mode)
+;;   (add-hook 'python-mode-hook 'elpy-enable))
+#+end_src
 * Frames, windows, buffers
 Always open in the same frame
 #+begin_src emacs-lisp :tangle yes
