@@ -98,6 +98,8 @@ Tangle and compile this file on save automatically:
 * Sane defaults
 ** Evil Mode
 It all starts here
+
+https://github.com/noctuid/evil-guide
 #+begin_src emacs-lisp :tangle yes
 (use-package evil
   :preface
@@ -112,7 +114,7 @@ It all starts here
         evil-toggle-key "s--"
 
         ;; cursor
-        evil-default-cursor '("Black" box)
+        evil-default-cursor '("Plum" box)
         evil-normal-state-cursor '("SpringGreen" box)
         evil-emacs-state-cursor '("Plum" box)
         evil-insert-state-cursor '("SpringGreen" bar)
@@ -885,7 +887,13 @@ Try again...
 
 Conda mode
 #+begin_src emacs-lisp :tangle yes
-
+(use-package conda
+  :preface
+  (setq conda-anaconda-home "~/.conda/")
+  :init
+  (conda-env-initialize-interactive-shells)
+  (conda-env-initialize-eshell)
+  (conda-env-autoactivate-mode t))
 #+end_src
 
 
