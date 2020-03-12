@@ -373,12 +373,11 @@ Move between open buffers with ease.
 
 (global-set-key (kbd "s-K") 'kill-this-buffer)
 
-;; (global-set-key (kbd "s-T") 'vsplit-last-buffer)
+(global-set-key (kbd "s-d") 'vsplit-last-buffer)
 ;; (global-set-key (kbd "s-t") 'hsplit-last-buffer)
 #+END_SRC
 
-#+RESULTS:
-: kill-this-buffer
+
 
 Go to other windows easily with one keystroke =s-something= instead of =C-x something=.
 =Move-text= allows moving lines around with meta-up/down.
@@ -449,13 +448,16 @@ Delete trailing spaces and add new line in the end of a file on save.
 
 Multiple cursors are a must. Make =<return>= insert a newline; =multiple-cursors-mode= can still be disabled with =C-g=.
 #+BEGIN_SRC emacs-lisp
-(use-package multiple-cursors
-  :config
-  (setq mc/always-run-for-all 1)
-  (global-set-key (kbd "s-d") 'mc/mark-next-like-this)
-  (global-set-key (kbd "C-s-g") 'mc/mark-all-dwim)
-  (define-key mc/keymap (kbd "<return>") nil)
-  (global-set-key (kbd "s-<mouse-1>") 'mc/add-cursor-on-click))
+;; (use-package multiple-cursors
+;;   :config
+;;   (setq mc/always-run-for-all 1)
+;;   (global-unset-key (kbd "C-g"))
+;;   (global-set-key (kbd "C-g") 'mc/mark-next-like-this)
+;;   (global-set-key (kbd "C-S-g") 'mc/unmark-previous-like-this)
+;;   (global-set-key (kbd "C-s-g") 'mc/mark-all-dwim)
+;;   (define-key mc/keymap (kbd "<return>") nil)
+;;   (define-key mc/keyboard-quit (kbd "<esc>") nil)
+;;   (global-set-key (kbd "s-<mouse-1>") 'mc/add-cursor-on-click))
 #+END_SRC
 
 #+RESULTS:
@@ -479,9 +481,10 @@ Automatic new windows are always on the bottom, not the side.
 (setq split-width-threshold nil)
 #+END_SRC
 
-Move between windows with alt-tab
+Move between windows with alt-tab and shift-alt-tab
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "M-<tab>") (kbd "C-x o"))
+(global-set-key (kbd "M-<tab>") 'next-multiframe-window)
+(global-set-key (kbd "M-S-<tab>") 'previous-multiframe-window)
 #+END_SRC
 
 Shackle to make sure all windows are nicely positioned.
