@@ -60,4 +60,4 @@ if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
 fi
 
-alias ssh="~/bin/ssh/colour.sh"
+#alias ssh="~/bin/ssh/colour.sh"
