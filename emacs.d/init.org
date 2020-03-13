@@ -27,9 +27,6 @@ Lexical scoping for the init-file is needed, it can be specified in the header. 
 #+END_SRC
 
 
-
-
-
 This helps get rid of =functions might not be defined at runtime= warnings. See https://github.com/jwiegley/use-package/issues/590
 
 #+BEGIN_SRC emacs-lisp
@@ -39,7 +36,6 @@ This helps get rid of =functions might not be defined at runtime= warnings. See 
 ** Use package
 
 Initialize package and add Melpa source.
-
 #+BEGIN_SRC emacs-lisp
 (require 'package)
 (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
@@ -70,7 +66,6 @@ Install use-package.
 ** Modifier keys
 
 Emacs control is Ctrl. Emacs Super is Command. Emacs Meta is Alt. Right Alt (option) can be used to enter symbols like em dashes =—=.
-
 #+BEGIN_SRC emacs-lisp :tangle yes
 (setq mac-right-command-modifier 'super)
 (setq mac-command-modifier 'super)
@@ -111,7 +106,7 @@ https://github.com/noctuid/evil-guide
         evil-symbol-word-search t
         evil-default-state 'emacs
         evil-ex-interactive-search-highlight 'selected-window
-        evil-toggle-key "s--"
+        evil-toggle-key "s-\\"
 
         ;; cursor
         evil-default-cursor '("Plum" box)
@@ -169,6 +164,9 @@ https://github.com/noctuid/evil-guide
   (evil-mode 1))
 #+end_src
 
+#+RESULTS:
+: t
+
 Evil leader shortcuts etc
 #+begin_src emacs-lisp :tangle yes
 ;; (use-package evil-leader
@@ -185,7 +183,8 @@ Exec path from shell. TODO: not sure if useful?
 #+begin_src emacs-lisp :tangle yes
 (use-package exec-path-from-shell
   :init
-  (exec-path-from-shell-copy-env "PATH"))
+  (exec-path-from-shell-copy-env "PATH")
+  (setq exec-path-from-shell-arguments '("-i")))
 #+end_src
 
 y-or-n-p is useful, but annoying sometimes
@@ -407,12 +406,23 @@ Vi-tilde fringes
 #+end_src
 * OS Integration
 Pass system shell environment to Emacs. This is important primarily for shell inside Emacs, but also things like Org mode export to Tex PDF don't work, since it relies on running external command =pdflatex=, which is loaded from =PATH=.
-#+BEGIN_SRC emacs-lisp
-(use-package exec-path-from-shell
+#+begin_src emacs-lisp :tangle yes
+(use-package direnv
+ :config
+ (direnv-mode))
+#+end_src
+
+Shell stuff
+#+begin_src emacs-lisp :tangle yes
+(use-package shell-pop
   :config
-  (when (memq window-system '(mac ns))
-    (exec-path-from-shell-initialize)))
-#+END_SRC
+  (setq shell-pop-shell-type "eshell")
+        ;; shell-pop "s--"))
+  (global-set-key (kbd "s-\-") 'shell-pop))
+#+end_src
+
+#+RESULTS:
+: t
 
 Use =Cmd+i= to open the current folder in a new tab of Terminal:
 #+BEGIN_SRC emacs-lisp
@@ -523,35 +533,18 @@ Move between open buffers with ease.
 (global-set-key (kbd "s-}") 'next-buffer)
 #+END_SRC
 
-#+RESULTS:
-: next-buffer
-
+MacOS-esque window management shortcuts.
+Terminal: CMD-D for splitting, Safari: CMD-W for close tabs
 #+BEGIN_SRC emacs-lisp
-(defun vsplit-last-buffer ()
-  (interactive)
-  (split-window-vertically)
-  (other-window 1 nil)
-  (switch-to-next-buffer))
+(global-set-key (kbd "s-w") (kbd "C-x 0"))
+(global-set-key (kbd "M-s-w") (kbd "C-x 1"))
 
-(defun hsplit-last-buffer ()
-  (interactive)
-  (split-window-horizontally)
-  (other-window 1 nil)
-  (switch-to-next-buffer))
-
-(global-set-key (kbd "s-w") (kbd "C-x 0")) ;; just like close tab in a web browser
-(global-set-key (kbd "s-1") (kbd "C-x 1")) ;; close others with shift
-
-(global-set-key (kbd "s-2") (kbd "C-x 2"))
-(global-set-key (kbd "s-3") (kbd "C-x 3"))
+(global-set-key (kbd "s-d") (kbd "C-x 2"))
+(global-set-key (kbd "s-D") (kbd "C-x 3"))
 
 (global-set-key (kbd "s-K") 'kill-this-buffer)
-
-(global-set-key (kbd "s-d") 'vsplit-last-buffer)
-;; (global-set-key (kbd "s-t") 'hsplit-last-buffer)
+;; (global-set-key (kbd "C-s-f") 'maximize-window)
 #+END_SRC
-
-
 
 Go to other windows easily with one keystroke =s-something= instead of =C-x something=.
 =Move-text= allows moving lines around with meta-up/down.
@@ -648,8 +641,20 @@ ESC as the universal "get me out of here" command.
 #+END_SRC
 ** Windows
 
-Automatic new windows are always on the bottom, not the side.
+MacOS Behavious
+#+begin_src emacs-lisp :tangle yes
+(defun delete-frame-or-kill-emacs ()
+  "Delete the selected frame.  If the last one, kill Emacs."
+  (interactive)
+  (condition-case nil (delete-frame) (error (kill-emacs))))
 
+(global-set-key [remap delete-frame] 'delete-frame-or-kill-emacs)
+#+end_src
+
+#+RESULTS:
+: delete-frame-or-kill-emacs
+
+Automatic new windows are always on the bottom, not the side.
 #+BEGIN_SRC emacs-lisp
 (setq split-height-threshold 0)
 (setq split-width-threshold nil)
@@ -657,7 +662,7 @@ Automatic new windows are always on the bottom, not the side.
 
 Move between windows with alt-tab and shift-alt-tab
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "M-<tab>") 'next-multiframe-window)
+(global-set-key (kbd "M-<tab>") 'other-window)
 (global-set-key (kbd "M-S-<tab>") 'previous-multiframe-window)
 #+END_SRC
 
