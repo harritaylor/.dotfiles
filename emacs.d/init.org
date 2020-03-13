@@ -913,12 +913,8 @@ PyEnv mode. Allows for activating arbitrary venvs.
 ;;   (add-hook 'python-mode-hook 'anaconda-eldoc-mode)
 ;;   (add-hook 'python-mode-hook 'elpy-enable))
 #+end_src
-* Frames, windows, buffers
-Always open in the same frame
-#+begin_src emacs-lisp :tangle yes
-  (setq ns-pop-up-frames nil)
-#+end_src
-* Org
+* Writing
+** Org
 
 Visually indent sections, which looks better for smaller files etc.
 #+begin_src emacs-lisp :tangle yes
@@ -989,12 +985,14 @@ Agenda and capture
 
 #+RESULTS:
 : org-agenda
-** Latex
+*** Latex
 #+begin_src emacs-lisp :tangle yes
 
 (require 'ox-latex)
 (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
 (setq org-highlight-latex-and-related '(latex))
+(setq org-preview-latex-default-process 'dvipng)
+(org-babel-do-load-languages 'org-babel-load-languages '((latex . t)))
 (with-eval-after-load 'ox-latex
   (add-to-list
    'org-latex-classes
@@ -1010,9 +1008,10 @@ Agenda and capture
 
 #+end_src
 
-#+RESULTS:
-| tufte-book | \documentclass{tufte-book} |
-** Pandoc
+#+begin_src emacs-lisp :tangle yes
+
+#+end_src
+*** Pandoc
 #+begin_src emacs-lisp :tangle yes
 
 (use-package pandoc-mode)
@@ -1023,15 +1022,29 @@ Agenda and capture
 #+end_src
 
 #+RESULTS:
-* LaTeX
-
+** LaTeX
 Install AucTeX
-#+begin_src emacs-lisp :tangle yes
-;; (use-package auctex)
+#+begin_src emacs-lisp :tangle yes :results none
+(use-package tex
+  :defer t
+  :ensure auctex
+  :config
+  (setq TeX-auto-save t))
 #+end_src
 
-#+RESULTS:
-: t
+Settings
+#+begin_src emacs-lisp :tangle yes :results none
+(setq TeX-PDF-mode t)
+(setq TeX-view-program-selection '((output-pdf "Skim"))
+      TeX-source-correlate-start-server t)
+#+end_src
+
+
+* Frames, windows, buffers
+Always open in the same frame
+#+begin_src emacs-lisp :tangle yes
+  (setq ns-pop-up-frames nil)
+#+end_src
 * Customisation
 
 Store custom-file separately, don't freak out when it's not found.

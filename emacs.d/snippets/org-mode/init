@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: emacs-init
+# key: emacs-init_
+# --
+#+begin_src emacs-lisp :tangle yes :results none
+$0
+#+end_src
